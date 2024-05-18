@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Empty from "../../../assets/Images/community.png";
+// import Empty from "../../../assets/Images/community.png";
 import { useAuthContext } from "../../../utils/AuthWrapper";
 import { useEffect, useState } from "react";
 import axios from "axios";

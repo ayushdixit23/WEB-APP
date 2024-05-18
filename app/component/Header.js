@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import search from "../assets/Images/Searchhhh.png";
-import notify from "../assets/Images/Notify.png";
+// import search from "../assets/Images/Searchhhh.png";
+// import notify from "../assets/Images/Notify.png";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthContext } from "../utils/AuthWrapper";
@@ -9,7 +9,7 @@ import { useAuthContext } from "../utils/AuthWrapper";
 function Header() {
   const { data } = useAuthContext();
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
   return (
     <div className="w-full h-[60px] flex flex-row bg-white items-center py-1  ">
       <div className="w-[15%] h-[100%] flex justify-center items-center">
@@ -25,7 +25,7 @@ function Header() {
       <div className="w-[55%] h-[100%] "></div>
       <div className="w-[30%] h-[100%] flex flex-row justify-center items-center">
         <Link href="../../phone/Search">
-          <Image src={search} alt="icons" className="h-[40px] w-[40px]" />
+          {/* <Image src={search} alt="icons" className="h-[40px] w-[40px]" /> */}
         </Link>
       </div>
     </div>

@@ -1,8 +1,8 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import delivery from "../../../assets/Images/delivery.png";
-import coupon from "../../../assets/Images/coupon.png";
+// import delivery from "../../../assets/Images/delivery.png";
+// import coupon from "../../../assets/Images/coupon.png";
 // import axios from "axios";
 // // import { API } from "@/Essentials";
 // import useRazorpay from "react-razorpay";
@@ -417,11 +417,11 @@ function page() {
               >
                 {/* No charges */}
                 <div className="w-[80%] h-[10%] bg-[#f9f9f9] rounded-lg flex flex-row items-center justify-center">
-                  <Image
+                  {/* <Image
                     src={delivery}
                     alt="delivery"
                     className="h-[30px] w-[30px] "
-                  />
+                  /> */}
                   <div className="text-[18px] text-[#2D2D2D] px-1">Yay!</div>
                   <div className="text-[18px] text-[#2D2D2D]  font-semibold">
                     No Delivery Charge
@@ -678,11 +678,11 @@ function page() {
           >
             {/* No charges */}
             <div className="w-[80%] h-[10%] bg-[#f9f9f9] dark:bg-[#3e3e3e] rounded-lg flex flex-row items-center justify-center">
-              <Image
+              {/* <Image
                 src={delivery}
                 alt="delivery"
                 className="h-[30px] w-[30px] "
-              />
+              /> */}
               <div className="text-[18px] px-1">Yay!</div>
               <div className="text-[18px] font-semibold">
                 No Delivery Charge
@@ -699,11 +699,11 @@ function page() {
 
               <div className="w-[100%] h-[50%] font-bold text-[20px] bg-[#f3f3f3] rounded-lg flex flex-row">
                 <div className="w-[10%] h-[100%] flex items-center justify-center ">
-                  <Image
+                  {/* <Image
                     src={coupon}
                     alt="coupon"
                     className="h-[30px] w-[20px]"
-                  />
+                  /> */}
                 </div>
 
                 <input
@@ -920,11 +920,11 @@ function page() {
           >
             {/* No charges */}
             <div className="w-[80%] h-[10%] bg-[#f9f9f9] rounded-lg flex flex-row items-center justify-center">
-              <Image
+              {/* <Image
                 src={delivery}
                 alt="delivery"
                 className="h-[30px] w-[30px] "
-              />
+              /> */}
               <div className="text-[18px] text-[#2D2D2D] px-1">Yay!</div>
               <div className="text-[18px] text-[#2D2D2D]  font-semibold">
                 No Delivery Charge
@@ -941,11 +941,11 @@ function page() {
 
               <div className="w-[100%] h-[50%] font-bold text-black text-[20px] bg-[#f3f3f3] rounded-lg flex flex-row">
                 <div className="w-[10%] h-[100%] flex items-center justify-center ">
-                  <Image
+                  {/* <Image
                     src={coupon}
                     alt="coupon"
                     className="h-[30px] w-[20px]"
-                  />
+                  /> */}
                 </div>
 
                 <input

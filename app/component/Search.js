@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import i from "../assets/Images/bluesearch.png";
+// import bluesearch from "../assets/Images/bluesearch.png";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
@@ -212,12 +212,12 @@ function page() {
           placeholder="Search"
           onChange={(t) => setText(t.target.value)}
         />
-        <Image
+        {/* <Image
           // onClick={handleSearch}
-          src={i}
+          src={bluesearch}
           alt="icons"
-          className="h-[40px] w-[40px] bg-contain"
-        />
+          className="h-[40px] w-[40px] "
+        /> */}
       </div>
 
       {/* Options */}
