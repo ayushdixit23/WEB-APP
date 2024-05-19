@@ -18,7 +18,7 @@ import {
   SuggestionBar, // an optional UI component that displays trending searches and channel / username results
 } from "@giphy/react-components";
 import { useDispatch, useSelector } from "react-redux";
-import { setContent, setMessage, setType } from "../redux/slice/messageSlice";
+import { setContent, setMessage, setMessages, setType } from "../redux/slice/messageSlice";
 
 // default
 import "@vidstack/react/player/styles/default/theme.css";
@@ -45,8 +45,9 @@ const Components = ({ id, con, show, setVisible }) => {
   const [url, setUrl] = useState("");
   const router = useRouter();
   const [user, setUser] = useState();
-  const [messages, setMessages] = useState([]);
 
+  // const [messages, setMessages] = useState([]);
+  const messages = useSelector((state) => state.message.messages)
   const dispatch = useDispatch();
   const type = useSelector((state) => state.message.type);
   const name = useSelector((state) => state.message.name);
@@ -65,7 +66,8 @@ const Components = ({ id, con, show, setVisible }) => {
       const res = await axios.get(`${API}/fetchconvs/${data?.id}/${id}/${con}`);
       // console.log(res.data)
       setUser(res.data.otheruserdetails);
-      setMessages(res.data.messages);
+      dispatch(setMessages(res.data.messages))
+      // setMessages(res.data.messages);
     } catch (error) {
       console.log(error);
     }
@@ -144,83 +146,136 @@ const Components = ({ id, con, show, setVisible }) => {
     }
   };
 
+  // useEffect(() => {
+  //   if (!socket?.connected) {
+  //     socket?.connect();
+
+  //     setTimeout(() => {
+  //       console.log("Reconnecting from useeffect...", socket?.connected);
+  //     }, 1000);
+  //   } else {
+  //     console.log(socket, "c");
+  //     socket?.on("ms", (dat) => {
+  //       // dispatch(sendconvmessage(dat));
+  //       console.log(dat, "data");
+  //       socketemitfunc({
+  //         event: "readnow",
+  //         data: { userId: data?.id, roomId: id, mesId: dat?.mesId },
+  //         socket,
+  //       });
+  //     });
+
+  //     //marking as read
+  //     socket?.on("readconvs", (dat) => {
+  //       socketemitfunc({
+  //         event: "successreadnow",
+  //         data: { userId: data?.id, roomId: id, mesId: dat?.mesId },
+  //         socket,
+  //       });
+
+  //       // dispatch(setseen(dat?.id));
+  //     });
+
+  //     //listening for blocking event
+  //     socket?.on("afterblock", (dat) => {
+  //       if (dat?.id === data?.id) {
+  //         // dispatch(setisblock(dat?.action));
+  //       }
+  //     });
+
+  //     //listening typing status
+  //     socket?.on("istyping", (dat) => {
+  //       const { id, status } = dat;
+  //       // dispatch(settypingstatus({ status, id }));
+  //     });
+
+  //     //listening for delete for everyone
+  //     socket?.on("deleted", (dat) => {
+  //       // dispatch(removeselectedmsgseveryonewithsockets(dat));
+  //     });
+
+  //     // dispatch(setcurrentconvId(convId));
+  //     // if (flatListRef?.current && message?.length > 0) {
+  //     // 	setTimeout(() => {
+  //     // 		flatListRef?.current?.scrollToEnd({
+  //     // 			animated: true,
+  //     // 		});
+  //     // 	}, 1000);
+  //     // }
+
+  //     // if (flatListRef?.current && message?.length > 0) {
+  //     // 	setTimeout(() => {
+  //     // 		const list = flatListRef.current;
+  //     // 		const lastItem = list.lastElementChild;
+  //     // 		if (lastItem) {
+  //     // 			lastItem.scrollIntoView({ behavior: "smooth", block: "end" });
+  //     // 		}
+  //     // 	}, 1000);
+  //     // }
+  //   }
+
+  //   return () => {
+  //     // dispatch(clearcurrentconvId());
+  //     socket?.off("ms");
+  //     socket?.off("readconvs");
+  //     socket?.off("istyping");
+  //     socket?.off("deleted");
+  //   };
+  // }, [con, data?.id, socket]);
+
+
   useEffect(() => {
-    console.log("check", socket);
-    if (!socket?.connected) {
-      socket?.connect();
-
-      setTimeout(() => {
-        console.log("Reconnecting from useeffect...", socket?.connected);
-      }, 1000);
-    } else {
-      console.log(socket, "c");
-      socket?.on("ms", (dat) => {
-        // dispatch(sendconvmessage(dat));
-        console.log(dat, "data");
-        socketemitfunc({
-          event: "readnow",
-          data: { userId: data?.id, roomId: id, mesId: dat?.mesId },
-          socket,
-        });
+    socket?.on('reads', dat => {
+      //dispatch(sendconvmessage(dat));
+      //console.log(id, myid, dat?.mesId);
+      socketemitfunc({
+        event: 'readnow',
+        data: { userId: data?.id, roomId: data?.id, mesId: dat?.mesId },
+        socket
       });
+      console.log(dat, "smjh aa jaye")
+    });
 
-      //marking as read
-      socket?.on("readconvs", (dat) => {
-        socketemitfunc({
-          event: "successreadnow",
-          data: { userId: data?.id, roomId: id, mesId: dat?.mesId },
-          socket,
-        });
 
-        // dispatch(setseen(dat?.id));
+
+    //marking as read
+    socket?.on('readconvs', dat => {
+      console.log(dat, "niche wala smjh aa jaye")
+      socketemitfunc({
+        event: 'successreadnow',
+        data: { userId: data?.id, roomId: data?.id, mesId: dat?.mesId },
+        socket
       });
+    });
 
-      //listening for blocking event
-      socket?.on("afterblock", (dat) => {
-        if (dat?.id === data?.id) {
-          // dispatch(setisblock(dat?.action));
-        }
-      });
+    //listening typing status
+    socket?.on('istyping', dat => {
+      const { id, status } = dat;
+      dispatch(settypingstatus({ status, id }));
+    });
 
-      //listening typing status
-      socket?.on("istyping", (dat) => {
-        const { id, status } = dat;
-        // dispatch(settypingstatus({ status, id }));
-      });
+    //listening for delete for everyone
+    // socket.on('deleted', dat => {
+    //   dispatch(removeselectedmsgseveryonewithsockets(dat));
+    // });
 
-      //listening for delete for everyone
-      socket?.on("deleted", (dat) => {
-        // dispatch(removeselectedmsgseveryonewithsockets(dat));
-      });
-
-      // dispatch(setcurrentconvId(convId));
-      // if (flatListRef?.current && message?.length > 0) {
-      // 	setTimeout(() => {
-      // 		flatListRef?.current?.scrollToEnd({
-      // 			animated: true,
-      // 		});
-      // 	}, 1000);
-      // }
-
-      // if (flatListRef?.current && message?.length > 0) {
-      // 	setTimeout(() => {
-      // 		const list = flatListRef.current;
-      // 		const lastItem = list.lastElementChild;
-      // 		if (lastItem) {
-      // 			lastItem.scrollIntoView({ behavior: "smooth", block: "end" });
-      // 		}
-      // 	}, 1000);
-      // }
-    }
+    // dispatch(setcurrentconvId(convId));
+    // if (flatListRef?.current && data?.length > 0) {
+    //   setTimeout(() => {
+    //     flatListRef?.current?.scrollToEnd({
+    //       animated: true,
+    //     });
+    //   }, 1000);
+    // }
 
     return () => {
-      // dispatch(clearcurrentconvId());
-      socket?.off("ms");
-      socket?.off("readconvs");
-      socket?.off("istyping");
-      socket?.off("deleted");
+
+      socket?.off('reads');
+      socket?.off('readconvs');
+      socket?.off('istyping');
+      socket?.off('deleted');
     };
-  }, [con, data?.id, socket]);
+  }, [data?.id, con]);
 
   const loadmore = async () => {
     try {
@@ -249,8 +304,7 @@ const Components = ({ id, con, show, setVisible }) => {
           const newMessages = res.data.messages;
           // console.log(newMessages, "message", res.data)
           // dispatch(sendmoreconvmessage(newMessages));
-
-          setMessages([...newMessages, ...messages]);
+          dispatch(setMessages([...newMessages, ...messages]))
           if (res.data.messages.length > 0) {
             // setEnd(true);
           }
@@ -386,10 +440,10 @@ const Components = ({ id, con, show, setVisible }) => {
         type === "image"
           ? "image"
           : type === "video"
-          ? "video"
-          : type === "doc"
-          ? "doc"
-          : "message",
+            ? "video"
+            : type === "doc"
+              ? "doc"
+              : "message",
       convId: con,
       reciever: id,
       isread: false,
@@ -406,28 +460,28 @@ const Components = ({ id, con, show, setVisible }) => {
       type === "image"
         ? "image"
         : type === "video"
-        ? "video"
-        : type === "doc"
-        ? "doc"
-        : "doc",
+          ? "video"
+          : type === "doc"
+            ? "doc"
+            : "doc",
       JSON.stringify({
         uri: content,
         type:
           type === "image"
             ? "image/jpg"
             : type === "video"
-            ? "video/mp4"
-            : type === "doc"
-            ? content?.type
-            : content?.type,
+              ? "video/mp4"
+              : type === "doc"
+                ? content?.type
+                : content?.type,
         name:
           type === "image"
             ? "image.jpg"
             : type === "video"
-            ? "video.mp4"
-            : type === "doc"
-            ? "doc.pdf"
-            : "doc.pdf",
+              ? "video.mp4"
+              : type === "doc"
+                ? "doc.pdf"
+                : "doc.pdf",
       })
     );
     form.append("media", content);
@@ -461,10 +515,10 @@ const Components = ({ id, con, show, setVisible }) => {
             type === "image"
               ? "image"
               : type === "video"
-              ? "video"
-              : type === "doc"
-              ? "doc"
-              : "message",
+                ? "video"
+                : type === "doc"
+                  ? "doc"
+                  : "message",
           convId: con,
           reciever: id,
           isread: false,
@@ -495,10 +549,10 @@ const Components = ({ id, con, show, setVisible }) => {
                 type === "image"
                   ? "image"
                   : type === "video"
-                  ? "video"
-                  : type === "doc"
-                  ? "doc"
-                  : "message",
+                    ? "video"
+                    : type === "doc"
+                      ? "doc"
+                      : "message",
             },
           ],
           pic: data?.profilepic,
@@ -585,11 +639,10 @@ const Components = ({ id, con, show, setVisible }) => {
             {messages.map((d, i) => (
               <div
                 key={i}
-                className={`flex gap-2 my-2 ${
-                  data?.id === d?.sender?._id
-                    ? "justify-start flex-row-reverse"
-                    : "justify-start"
-                }  w-full items-start`}
+                className={`flex gap-2 my-2 ${data?.id === d?.sender?._id
+                  ? "justify-start flex-row-reverse"
+                  : "justify-start"
+                  }  w-full items-start`}
               >
                 <div className="flex flex-col items-center justify-center">
                   <div className="h-[40px] w-[40px] bg-[#fff] rounded-2xl"></div>
@@ -597,22 +650,20 @@ const Components = ({ id, con, show, setVisible }) => {
                 </div>
                 {d?.typ === "message" && (
                   <div
-                    className={` mt-6 ${
-                      data?.id === d?.sender?._id
-                        ? "bg-[#0075ff] text-white p-2 rounded-l-2xl pn:max-sm:text-[14px] max-w-[320px] rounded-br-2xl "
-                        : "bg-[#ffffff] p-2 rounded-r-2xl pn:max-sm:text-[14px] max-w-[320px] rounded-bl-2xl"
-                    }`}
+                    className={` mt-6 ${data?.id === d?.sender?._id
+                      ? "bg-[#0075ff] text-white p-2 rounded-l-2xl pn:max-sm:text-[14px] max-w-[320px] rounded-br-2xl "
+                      : "bg-[#ffffff] p-2 rounded-r-2xl pn:max-sm:text-[14px] max-w-[320px] rounded-bl-2xl"
+                      }`}
                   >
                     {d.text}
                   </div>
                 )}
                 {d?.typ == "image" && (
                   <div
-                    className={`${
-                      data?.id === d?.sender?._id
-                        ? "bg-[#0075ff] text-white p-2 rounded-l-2xl mt-4 rounded-br-2xl "
-                        : "bg-[#ffffff] p-2 rounded-r-2xl mt-4 rounded-bl-2xl"
-                    }`}
+                    className={`${data?.id === d?.sender?._id
+                      ? "bg-[#0075ff] text-white p-2 rounded-l-2xl mt-4 rounded-br-2xl "
+                      : "bg-[#ffffff] p-2 rounded-r-2xl mt-4 rounded-bl-2xl"
+                      }`}
                   >
                     <img
                       src={d?.url}
@@ -622,11 +673,10 @@ const Components = ({ id, con, show, setVisible }) => {
                 )}
                 {d?.typ == "video" && (
                   <div
-                    className={`${
-                      data?.id === d?.sender?._id
-                        ? " bg-[#0075ff] text-white h-[145px] sm:w-[240px] mt-4 sm:h-[240px] w-[145px] flex justify-center items-center p-2 rounded-l-2xl rounded-br-2xl"
-                        : "bg-[#ffffff] h-[145px] sm:w-[240px] mt-4 sm:h-[240px] w-[145px] flex justify-center items-center p-2 rounded-r-2xl rounded-bl-2xl"
-                    }`}
+                    className={`${data?.id === d?.sender?._id
+                      ? " bg-[#0075ff] text-white h-[145px] sm:w-[240px] mt-4 sm:h-[240px] w-[145px] flex justify-center items-center p-2 rounded-l-2xl rounded-br-2xl"
+                      : "bg-[#ffffff] h-[145px] sm:w-[240px] mt-4 sm:h-[240px] w-[145px] flex justify-center items-center p-2 rounded-r-2xl rounded-bl-2xl"
+                      }`}
                   >
                     {/* <ReactPlayer url={d?.url} controls /> */}
 
@@ -652,31 +702,28 @@ const Components = ({ id, con, show, setVisible }) => {
                 )}
                 {d?.typ == "post" && (
                   <div
-                    className={`${
-                      data?.id === d?.sender?._id
-                        ? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
-                        : "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
-                    }`}
+                    className={`${data?.id === d?.sender?._id
+                      ? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
+                      : "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
+                      }`}
                   >
                     <div className="">
                       {d?.content.type.startsWith("image") ? (
                         <img
-                          className={`${
-                            data?.id === d?.sender?._id
-                              ? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-                              : "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
-                          }`}
+                          className={`${data?.id === d?.sender?._id
+                            ? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
+                            : "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
+                            }`}
                           src={d?.url}
                           alt=""
                         />
                       ) : (
                         <video
                           src={d?.url}
-                          className={`${
-                            data?.id === d?.sender?._id
-                              ? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-                              : "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
-                          }`}
+                          className={`${data?.id === d?.sender?._id
+                            ? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
+                            : "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
+                            }`}
                           controls
                         />
                       )}
@@ -691,11 +738,10 @@ const Components = ({ id, con, show, setVisible }) => {
                 )}
                 {d?.typ == "product" && (
                   <div
-                    className={`${
-                      data?.id === d?.sender?._id
-                        ? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
-                        : "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
-                    }`}
+                    className={`${data?.id === d?.sender?._id
+                      ? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
+                      : "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
+                      }`}
                   >
                     <div>
                       {d?.content.type.startsWith("image") ? (
@@ -744,6 +790,10 @@ const Components = ({ id, con, show, setVisible }) => {
           sendMessages={sendm}
           sendgif={sendgif}
           handleSend={handleSend}
+          senderId={data?.id}
+          sender_fullname={data?.fullname}
+          convId={con}
+          recieverId={id}
           setContent={setContent}
           setMessage={setMessage}
           setType={setType}

@@ -70,7 +70,7 @@ export const SocketContextProvider = ({ children }) => {
       newSocket.on("outer-private", (data) => {
        
       //  dispatch(setMessages([...messages, data.data]));
-        dispatch(setincommsgs( data.data));
+        dispatch(setincommsgs(data.data));
       });
       // const newSocket = io("https://rooms.grovyo.xyz", {
       //   query: { userId: data.id },

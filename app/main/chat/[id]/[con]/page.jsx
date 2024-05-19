@@ -808,7 +808,7 @@ const Components = () => {
           sendgif={sendgif}
           senderId={data?.id}
           sender_fullname={data?.fullname}
-          convId={params?.id}
+          convId={params?.con}
           recieverId={params?.id}
           handleSend={handleSend}
           setContent={setContent}

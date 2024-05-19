@@ -17,7 +17,7 @@ export async function middleware(request) {
     return NextResponse.next();
   }
 
-  if ((token && check?.isValid) && (path === "/login")) {
+  if ((token && check?.isValid) && ((path === "/login") || (path === "/"))) {
     return NextResponse.redirect(new URL("/main/feed/newForYou", request.url));
   }
 

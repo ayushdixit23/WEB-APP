@@ -98,6 +98,7 @@ const Input = ({ sendMessages, sendgif, handleSend, senderId, convId, recieverId
           };
 
           if (type == "text") {
+            console.log(mess, "mera msg")
             sendMessages();
             dispatch(setincommsgs(mess))
           } else if (type == "gif") {
