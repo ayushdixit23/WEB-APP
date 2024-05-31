@@ -9,6 +9,7 @@ export const messageSlice = createSlice({
     content: "",
     name: "",
     size: "",
+    hiddenMsg: []
   },
   reducers: {
     setMessage: (state, action) => {
@@ -34,9 +35,12 @@ export const messageSlice = createSlice({
         messages: [...old, action.payload]
       }
     },
+    setHiddenMsgs: (state, action) => {
+      state.hiddenMsg = action.payload
+    }
   },
 });
 
-export const { setMessage, setType, setContent, setMessages, setincommsgs } =
+export const { setMessage, setType, setContent, setMessages, setincommsgs, setHiddenMsgs } =
   messageSlice.actions;
 export default messageSlice.reducer;

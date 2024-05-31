@@ -37,23 +37,23 @@ const Cart = ({ d, id, removeItem }) => {
 
 	return (
 		<div
-			className="w-[90%] h-[110px] py-1 justify-center bg-white flex flex-col mt-1 rounded-lg items-center"
+			className="w-[96%] h-[110px] py-1 justify-center bg-white flex flex-col mt-1 rounded-lg items-center"
 		>
 			<div className="w-[95%] h-[100%] bg-white mt-2 flex flex-row items-center justify-between">
-				<div className="flex">
+				<div className="flex items-center">
 					<img
 						alt="image"
 						src={d?.image}
 						className="bg-contain h-[90px] w-[90px] bg-[#f9f9f9]"
 					/>
-					<div className="flex flex-col text-black bg-white px-2">
-						<div className="text-[14px] font-semibold">
+					<div className="flex flex-col text-black px-2">
+						<div className="text-[14px] truncate max-w-[200px] font-semibold">
 							{d?.c?.product?.name}
 						</div>
 						<div className="text-[10px] font-semibold py-1">
 							sold by {d?.c?.product?.sellername}
 						</div>
-						<div className="flex flex-row  items-center">
+						<div className="flex flex-row  font-semibold items-center">
 							<div className="text-[14px]">
 								{d?.c?.product?.discountedprice}
 							</div>

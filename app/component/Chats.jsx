@@ -145,7 +145,6 @@ const Components = ({ id, con, show, setVisible }) => {
       dispatch(setType("text"));
     }
   };
-
   // useEffect(() => {
   //   if (!socket?.connected) {
   //     socket?.connect();

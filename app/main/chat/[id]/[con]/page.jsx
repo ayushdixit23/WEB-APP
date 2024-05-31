@@ -8,15 +8,16 @@ import {
 } from "../../../../utils/SocketWrapper";
 import axios from "axios";
 import moment from "moment";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import React, { useContext, useEffect, useState } from "react";
+
 import { GiphyFetch } from "@giphy/js-fetch-api";
 import {
-  Grid, // our UI Component to display the results
-  SearchBar, // the search bar the user will type into
-  SearchContext, // the context that wraps and connects our components
-  SearchContextManager, // the context manager, includes the Context.Provider
-  SuggestionBar, // an optional UI component that displays trending searches and channel / username results
+  Grid,
+  SearchBar,
+  SearchContext,
+  SearchContextManager,
+  SuggestionBar,
 } from "@giphy/react-components";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -29,14 +30,13 @@ import {
 // default
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
-import { MediaPlayer, MediaProvider } from "@vidstack/react";
 import styles from "../../../../CustomScrollbarComponent.module.css";
-import {
-  defaultLayoutIcons,
-  DefaultVideoLayout,
-} from "@vidstack/react/player/layouts/default";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { LuLoader2 } from "react-icons/lu";
+import PrivateChats from "../../../../component/PrivateChats"
+import Hidden from "../../../../component/Hidden"
+import { IoReorderThreeOutline } from "react-icons/io5";
+import Link from "next/link";
 
 const SearchExperience = () => (
   <SearchContextManager apiKey={"BhiAZ1DOyIHjZlGxrtP2NozVsmpJ27Kz"}>
@@ -47,11 +47,13 @@ const SearchExperience = () => (
 const Components = () => {
   const { data } = useAuthContext();
   const { socket } = useSocketContext();
+  const searchParams = useSearchParams()
+  const optionType = searchParams.get("type")
   const params = useParams();
   const [url, setUrl] = useState("");
   const [user, setUser] = useState();
   const messages = useSelector((state) => state.message.messages);
-
+  const [options, setOptions] = useState(false)
   const dispatch = useDispatch();
   const type = useSelector((state) => state.message.type);
   const name = useSelector((state) => state.message.name);
@@ -199,25 +201,6 @@ const Components = () => {
       socket?.on("deleted", (dat) => {
         // dispatch(removeselectedmsgseveryonewithsockets(dat));
       });
-
-      // dispatch(setcurrentconvId(convId));
-      // if (flatListRef?.current && message?.length > 0) {
-      // 	setTimeout(() => {
-      // 		flatListRef?.current?.scrollToEnd({
-      // 			animated: true,
-      // 		});
-      // 	}, 1000);
-      // }
-
-      // if (flatListRef?.current && message?.length > 0) {
-      // 	setTimeout(() => {
-      // 		const list = flatListRef.current;
-      // 		const lastItem = list.lastElementChild;
-      // 		if (lastItem) {
-      // 			lastItem.scrollIntoView({ behavior: "smooth", block: "end" });
-      // 		}
-      // 	}, 1000);
-      // }
     }
 
     return () => {
@@ -535,6 +518,34 @@ const Components = () => {
     }
   };
 
+  const handleReport = async ({ type }) => {
+    try {
+      if (reports?.length > 0) {
+        await axios.post(`${API}/v1/reporting/${data?.id}`,
+          { data: reports, id: params?.con, type: type });
+      } else { console.log('Something went wrong...'); }
+    } catch (e) {
+      console.log(e)
+    }
+  };
+
+  const handleBlock = async () => {
+    try {
+      socketemitfunc({
+        event: 'blockperson',
+        data: { roomId: convId, userId: data?.id, action: canblock ? false : true },
+        socket
+      });
+      const res = await axios.post(`${API}/blockpeople/${data?.id}`, {
+        userid: data?.id,
+        time: Date.now(),
+      });
+    } catch (e) {
+
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     socket?.on('reads', dat => {
       //dispatch(sendconvmessage(dat));
@@ -560,10 +571,10 @@ const Components = () => {
     });
 
     //listening typing status
-    socket?.on('istyping', dat => {
-      const { id, status } = dat;
-      dispatch(settypingstatus({ status, id }));
-    });
+    // socket?.on('istyping', dat => {
+    //   const { id, status } = dat;
+    //   dispatch(settypingstatus({ status, id }));
+    // });
 
     //listening for delete for everyone
     // socket.on('deleted', dat => {
@@ -589,243 +600,121 @@ const Components = () => {
   }, [data?.id, params?.con]);
 
   return (
-    <div className="w-full h-[100vh] relative">
-      {/* header  */}
-      <a
-        href={`https://grovyo.com/${user?.username}`}
-        target="_blank"
-        className="w-[100%] gap-2 bg-white absolute items-center h-[60px] border-[0.5px] border-b-gray-50 px-4 flex flex-row "
-      >
-        <div>
-          <img
-            src={user?.profilepic}
-            className="h-[45px] w-[45px] rounded-[20px] ring-1 ring-white bg-yellow-300 "
-          />
-        </div>
-        <div>
-          <div className="text-[15px] font-medium">{user?.fullname}</div>
-          <div className="text-[14px]">
-            {socket?.connected ? "online" : "offline"}
-          </div>
-        </div>
-        {/* user.isverified */}
-      </a>
-      {/* chats  */}
-      <div className="h-[60px] "></div>
-      <div
-        id="scrollableDiv"
-        style={{
-          height: "81vh",
-          overflow: "auto",
-          display: "flex",
-          flexDirection: "column-reverse",
-        }}
-        className={` ${styles.customScrollbar} bg-[#f7f7f7]`}
-      >
-        {/*Put the scroll bar always on the bottom*/}
-        <InfiniteScroll
-          dataLength={messages.length}
-          next={loadmore}
-          style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
-          inverse={true} //
-          hasMore={true}
-          loader={
-            <div className="flex justify-center items-center p-3">
-              <div className="animate-spin ">
-                <LuLoader2 />
+    <>
+      <div onClick={() => setOptions(false)} className={`fixed inset - 0 ${options ? "z-40" : "-z-20"} w - screen h - screen`}></div>
+      <div className="w-full h-[100vh] relative">
+        {/* header  */}
+        <div
+          className="w-[100%] gap-2 bg-white justify-between absolute items-center h-[60px] border-[0.5px] border-b-gray-50 px-4 flex flex-row "
+        >
+          <a target="_blank" href={`https://grovyo.com/${user?.username}`} className="flex flex-row items-center w-full h-full gap-2">
+            <div>
+              <img
+                src={user?.profilepic}
+                className="h-[45px] w-[45px] rounded-[20px] ring-1 ring-white bg-yellow-300 "
+              />
+            </div>
+            <div>
+              <div className="text-[15px] font-medium">{user?.fullname}</div>
+              <div className="text-[14px]">
+                {socket?.connected ? "online" : "offline"}
               </div>
             </div>
-          }
-          scrollableTarget="scrollableDiv"
-        >
-          <div>
-            {messages.map((d, i) => (
-              <div
-                key={i}
-                className={`flex  gap-2 my-2 ${data?.id === d?.sender?._id
-                  ? "justify-end "
-                  : "justify-start "
-                  }  w-full items-start`}
-              >
 
-                {data?.id !== d?.sender?._id && <div className="flex flex-col items-center justify-center">
-                  {data?.id !== d?.sender?._id && <div className="h-[40px] w-[40px] overflow-hidden bg-[#fff] rounded-2xl">
-                    <img src={user?.profilepic} className="w-full h-full" />
-                  </div>}
-
-                  <div className="text-[14px] mt-1">7:07</div>
-                </div>}
-                <div>
-                  {d?.typ === "message" && (
-                    <div
-                      className={` mt-6 ${data?.id === d?.sender?._id
-                        ? "bg-[#0075ff] text-white p-2 rounded-l-2xl pn:max-sm:text-[14px] max-w-[320px] rounded-br-2xl "
-                        : "bg-[#ffffff] p-2 rounded-r-2xl pn:max-sm:text-[14px] max-w-[320px] rounded-bl-2xl"
-                        }`}
-                    >
-                      {d.text}
-                    </div>
-                  )}
-                  {d?.typ == "image" && (
-                    <div
-                      className={`${data?.id === d?.sender?._id
-                        ? "bg-[#0075ff] text-white p-2 rounded-l-2xl mt-4 rounded-br-2xl "
-                        : "bg-[#ffffff] p-2 rounded-r-2xl mt-4 rounded-bl-2xl"
-                        }`}
-                    >
-                      <img
-                        src={d?.url}
-                        className="h-[145px] sm:w-[240px] sm:h-[240px] w-[145px] rounded-2xl  bg-yellow-300 "
-                      />
-                    </div>
-                  )}
-                  {d?.typ == "video" && (
-                    <div
-                      className={`${data?.id === d?.sender?._id
-                        ? " bg-[#0075ff] text-white h-[145px] sm:w-[240px] mt-4 sm:h-[240px] w-[145px] flex justify-center items-center p-2 rounded-l-2xl rounded-br-2xl"
-                        : "bg-[#ffffff] h-[145px] sm:w-[240px] mt-4 sm:h-[240px] w-[145px] flex justify-center items-center p-2 rounded-r-2xl rounded-bl-2xl"
-                        }`}
-                    >
-                      {/* <ReactPlayer url={d?.url} controls /> */}
-
-                      <MediaPlayer src={d?.url} onQualitiesChange={480}>
-                        <MediaProvider />
-                        <DefaultVideoLayout
-                          thumbnails={d?.url}
-                          icons={defaultLayoutIcons}
-                        />
-                      </MediaPlayer>
-
-                      {/* <video src={d?.url} className="h-[145px] w-[145px] rounded-2xl bg-yellow-300 " controls /> */}
-                    </div>
-                  )}
-                  {d?.typ == "glimpse" && (
-                    <div className="bg-[#0075ff] text-white p-2 rounded-r-2xl rounded-bl-2xl">
-                      <video
-                        src={d?.url}
-                        className="h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-                        controls
-                      />
-                    </div>
-                  )}
-                  {d?.typ == "post" && (
-                    <div
-                      className={`${data?.id === d?.sender?._id
-                        ? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
-                        : "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
-                        }`}
-                    >
-                      <div className="">
-                        {d?.content.type.startsWith("image") ? (
-                          <img
-                            className={`${data?.id === d?.sender?._id
-                              ? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-                              : "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
-                              }`}
-                            src={d?.url}
-                            alt=""
-                          />
-                        ) : (
-                          <video
-                            src={d?.url}
-                            className={`${data?.id === d?.sender?._id
-                              ? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-                              : "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
-                              }`}
-                            controls
-                          />
-                        )}
-                      </div>
-                      <div className="h-[45px] sm:h-[40px] sm:w-[240px] w-[145px] rounded-2xl ">
-                        {d?.text}
-                      </div>
-                      <div className="text-[14px] sm:w-[240px] flex justify-center items-center w-[145px] h-[40px] bg-[#f7f7f7] rounded-xl">
-                        Visit
-                      </div>
-                    </div>
-                  )}
-                  {d?.typ == "product" && (
-                    <div
-                      className={`${data?.id === d?.sender?._id
-                        ? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
-                        : "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
-                        }`}
-                    >
-                      <div>
-                        {d?.content.type.startsWith("image") ? (
-                          <img
-                            src={d?.url}
-                            alt=""
-                            className="h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-                          />
-                        ) : (
-                          <video
-                            src={d?.url}
-                            controls
-                            className="h-[145px] w-[145px] sm:h-[240px] sm:w-[240px] rounded-2xl bg-yellow-300 "
-                          />
-                        )}
-                      </div>
-                      <div className="w-[145px] sm:w-[240px] overflow-hidden text-[14px] h-[80px]">
-                        {d?.text}
-                      </div>
-                      <div className="text-[14px] sm:w-[240px] flex justify-center items-center w-[145px] h-[40px] bg-white rounded-xl">
-                        View Product
-                      </div>
-                    </div>
-                  )}
-                  {d?.typ == "gif" && (
-                    <div>
-                      <div className="max-h-[145px] max-w-[145px] sm:max-h-[230px] sm:max-w-[230px]">
-                        <img
-                          className="h-full w-full object-contain"
-                          src={d?.url}
-                          alt="gif"
-                        />
-                      </div>
-                    </div>
-                  )}
+          </a >
+          {/* user.isverified */}
+          < div onClick={() => setOptions(true)} className="flex justify-center relative items-center text-3xl" >
+            <IoReorderThreeOutline />
+            {
+              options && <div className="absolute w-[200px] z-40 text-sm h-auto -left-[170px] p-3 top-7 text-white bg-black">
+                <div className="flex flex-col gap-2 font-semibold h-full">
+                  <Link href={`/main/chat/${params?.id}/${params?.con}?type=hiddenMsgs`}>Hidden Messages</Link>
+                  <div onClick={handleReport}>Reports</div>
+                  <div onClick={handleBlock}>Block</div>
                 </div>
-                {data?.id === d?.sender?._id && <div className="flex flex-col items-center justify-center">
-
-                  {data?.id === d?.sender?._id && <div className="h-[35px]  relative w-[35px]  overflow-hidden bg-[#fff] rounded-[14px]">
-                    <div className="absolute top-0 left-0 bg-black/40 w-full h-full"></div>
-                    <img src={data?.dp} className="w-full h-full" />
-                  </div>}
-
-                  <div className="text-[14px] mt-1">7:07</div>
-                </div>}
               </div>
-            ))}
-          </div>
-        </InfiniteScroll>
-      </div>
-      <div className="absolute bottom-0 bg-white w-full">
-        {/* <div onClick={() => loadmore()}>Load More</div> */}
+            }
+          </div >
 
-        <Input
-          sendMessages={sendm}
-          sendgif={sendgif}
-          senderId={data?.id}
-          sender_fullname={data?.fullname}
-          convId={params?.con}
-          recieverId={params?.id}
-          handleSend={handleSend}
-          setContent={setContent}
-          setMessage={setMessage}
-          setType={setType}
-          type={type}
-          name={name}
-          content={content}
-          size={size}
-          message={msg}
-          dispatch={dispatch}
-        />
-      </div>
-      {/*
+        </div >
+        {/* chats  */}
+        < div className="h-[60px] " ></div >
+
+        {optionType === "hiddenMsgs" && <Hidden id={data?.id} user={user} convId={params?.con} socket={socket} data={data} dispatch={dispatch} />}
+        {
+          !optionType &&
+          <>
+            <div
+              id="scrollableDiv"
+              style={{
+                height: "81vh",
+                overflow: "auto",
+                display: "flex",
+                flexDirection: "column-reverse",
+              }}
+              className={` ${styles.customScrollbar} bg-[#f7f7f7]`}
+            >
+              {/*Put the scroll bar always on the bottom*/}
+              <InfiniteScroll
+                dataLength={messages.length}
+                next={loadmore}
+                style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
+                inverse={true} //
+                hasMore={true}
+                loader={
+                  <div className="flex justify-center items-center p-3">
+                    <div className="animate-spin ">
+                      <LuLoader2 />
+                    </div>
+                  </div>
+                }
+                scrollableTarget="scrollableDiv"
+              >
+                <div>
+                  {messages.map((d, i) => (
+                    <PrivateChats
+                      d={d}
+                      messages={messages}
+                      convId={params?.con}
+                      socket={socket}
+                      data={data}
+                      dispatch={dispatch}
+                      i={i}
+                      user={user}
+                    />
+                  ))}
+                </div>
+              </InfiniteScroll>
+            </div>
+            <div className="absolute bottom-0 bg-white w-full">
+              {/* <div onClick={() => loadmore()}>Load More</div> */}
+
+              <Input
+                sendMessages={sendm}
+                sendgif={sendgif}
+                senderId={data?.id}
+                sender_fullname={data?.fullname}
+                convId={params?.con}
+                recieverId={params?.id}
+                handleSend={handleSend}
+                setContent={setContent}
+                setMessage={setMessage}
+                setType={setType}
+                type={type}
+                name={name}
+                content={content}
+                size={size}
+                message={msg}
+                dispatch={dispatch}
+              />
+            </div>
+          </>
+        }
+
+        {/*
 			<SearchBar />
 			{/* <SuggestionBar /> */}
-      {/* 
+        {/* 
 			<Grid width={800} columns={3} gutter={6} onGifClick={(item, e) => {
 				e.preventDefault(); console.log(item, "item");
 
@@ -833,7 +722,8 @@ const Components = () => {
 				dispatch(setMessage(item?.images.downsized.url))
 				setUrl(item?.images.downsized.url);
 			}} fetchGifs={fetchGifs} key={searchKey} /> */}
-    </div>
+      </div >
+    </>
   );
 };
 

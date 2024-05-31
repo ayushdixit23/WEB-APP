@@ -217,9 +217,9 @@ function page() {
   }, [user.id])
 
   return (
-    <div className="md:flex bg-[#fcfcfc] dark:bg-[#3e3e3e] h-[89.5vh]">
+    <div className="md:flex bg-[#ff3d3d] dark:bg-[#3e3e3e] h-[89.5vh]">
       {data.length === 0 ? (
-        <div className="pn:max-md:w-[100%] md:min-w-[390px] pn:max-md:h-[100%] bg-[#fdfdfd] dark:bg-[#161616] border-r-2 dark:border-[#3e3e3e] border-[#f9f9f9] flex items-center flex-col">
+        <div className="pn:max-md:w-[100%] md:min-w-[390px] pn:max-md:h-[100%] bg-[#ffffff] dark:bg-[#161616] border-r-2 dark:border-[#3e3e3e] border-[#f9f9f9] flex items-center flex-col">
           <div className="h-[100%] w-[100%] flex items-center flex-col justify-center ">
             {/* <Image
               alt="cart"
@@ -302,15 +302,15 @@ function page() {
           </div>
         </div>
       ) : (
-        <div className="sm:h-[100%] py-6 pn:max-md:w-[100%] md:min-w-[390px] pn:max-sm:pt-40 bg-[#f8f8f8] flex items-center flex-col  h-[100vh] pn:max-md:fixed">
+        <div className="sm:h-[100%] py-1 pn:max-md:w-[100%] md:min-w-[390px] md:[360px] pn:max-sm:pt-40 bg-[#ffffff] flex items-center flex-col  h-[100vh] pn:max-md:fixed">
           <div
             onClick={() => {
               setUp(false);
             }}
-            className="h-[40px] w-[90%] justify-between flex items-center"
+            className="h-[40px] w-[96%] justify-between flex items-center"
           >
-            <div className="text-black font-bold">Order Summary</div>
-            <div className="text-[14px] font-bold">{data?.length} items</div>
+            <div className="text-black font-semibold">Order Summary</div>
+            <div className="text-[14px] font-semibold">{data?.length} items</div>
           </div>
           {/* product */}
           {data.map((d, e) => (
