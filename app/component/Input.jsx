@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { IoSend } from "react-icons/io5";
+import { IoDocumentSharp, IoSend } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { setincommsgs } from "../redux/slice/messageSlice";
 import moment from "moment";
@@ -11,10 +11,9 @@ import { GiphyFetch } from "@giphy/js-fetch-api";
 
 const Input = ({ sendMessages, sendgif, handleSend, senderId, convId, recieverId, sender_fullname, type, name, content, size, message, setContent, setMessage, setType, dispatch }) => (
   <SearchContextManager apiKey={"BhiAZ1DOyIHjZlGxrtP2NozVsmpJ27Kz"}>
-    <Component sendMessage={sendMessages} sendgif={sendgif} handleSend={handleSend} senderId={senderId} convId={convId} recieverId={recieverId} sender_fullname={sender_fullname} type={type} name={name} content={content} size={size} message={message} setContent={setContent} setMessage={setMessage} setType={setType} dispatch={dispatch} />
+    <Component sendMessages={sendMessages} sendgif={sendgif} handleSend={handleSend} senderId={senderId} convId={convId} recieverId={recieverId} sender_fullname={sender_fullname} type={type} name={name} content={content} size={size} message={message} setContent={setContent} setMessage={setMessage} setType={setType} dispatch={dispatch} />
   </SearchContextManager>
 );
-
 
 const Component = ({ sendMessages, sendgif, handleSend, senderId, convId, recieverId, sender_fullname, type, name, content, size, message, setContent, setMessage, setType, dispatch }) => {
   // const [message, setMessage] = useState("");
@@ -50,20 +49,24 @@ const Component = ({ sendMessages, sendgif, handleSend, senderId, convId, reciev
         isread: false,
         //      sequence: data.length + 1,
         sender: { _id: senderId },
-
+        content: { content, name, size },
+        url: content ? URL.createObjectURL(content) : content || null,
         status: "active",
         readby: [],
       };
 
       if (type == "text") {
-        console.log(mess, "mera msg")
         sendMessages();
-        dispatch(setincommsgs(mess))
+        if (message.length > 0) {
+          dispatch(setincommsgs(mess))
+        }
       } else if (type == "gif") {
         sendgif(message)
-      } if ((type == "image" || type == "video")) {
-        console.log("runde")
+        dispatch(setincommsgs(mess))
+      } if ((type == "image" || type == "video" || type == "doc")) {
+        console.log(mess, "mera msg")
         handleSend()
+        dispatch(setincommsgs(mess))
       }
       setMessage("");
       setD("");
@@ -120,17 +123,14 @@ const Component = ({ sendMessages, sendgif, handleSend, senderId, convId, reciev
                   id="image"
                   type="file"
                   name="image"
+                  accept="image/*"
                   onChange={(e) => {
                     const selectedFile = e.target.files && e.target.files[0];
                     if (selectedFile) {
-                      if (selectedFile.type.startsWith("image")) {
-                        dispatch(setType("image"))
-                      } else if (selectedFile.type.startsWith("video")) {
-                        dispatch(setType("video"))
-                      }
+                      dispatch(setType("image"))
                       dispatch(setContent({ content: e.target.files[0], name: selectedFile.name, size: selectedFile.size }))
-
                     }
+                    console.log(message)
                   }}
                   className="hidden"
                 />
@@ -138,29 +138,49 @@ const Component = ({ sendMessages, sendgif, handleSend, senderId, convId, reciev
                   <TfiImage className="w-[25px] h-[25px]" />
                 </label>
               </div>
-              <div>
+              <div className="ml-6">
                 <input
-                  id="image"
+                  id="video"
                   type="file"
-                  name="image"
+                  name="video"
+                  accept="video/*"
                   onChange={(e) => {
+
                     const selectedFile = e.target.files && e.target.files[0];
                     if (selectedFile) {
-                      if (selectedFile.type.startsWith("image")) {
-                        dispatch(setType("image"))
-                      } else if (selectedFile.type.startsWith("video")) {
-                        dispatch(setType("video"))
-                      }
-                      dispatch(setContent({ content: e.target.files[0], name: selectedFile.name, size: selectedFile.size }))
 
+                      dispatch(setType("video"))
+                      dispatch(setContent({ content: e.target.files[0], name: selectedFile.name, size: selectedFile.size }))
                     }
                   }}
                   className="hidden"
                 />
-                <label htmlFor="image">
+                <label htmlFor="video">
                   <MdOutlineOndemandVideo className="w-[25px] h-[25px]" />
                 </label>
               </div>
+
+              <div className="ml-6">
+                <input
+                  id="document"
+                  type="file"
+                  name="document"
+                  accept=".pdf, .zip"
+                  onChange={(e) => {
+
+                    const selectedFile = e.target.files && e.target.files[0];
+                    if (selectedFile) {
+                      dispatch(setType("doc"))
+                      dispatch(setContent({ content: e.target.files[0], name: selectedFile.name, size: selectedFile.size }))
+                    }
+                  }}
+                  className="hidden"
+                />
+                <label htmlFor="document">
+                  <IoDocumentSharp className="w-[25px] h-[25px]" />
+                </label>
+              </div>
+
             </div>
           </div>
         </div>

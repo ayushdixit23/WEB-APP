@@ -1,8 +1,8 @@
-import { MediaPlayer, MediaProvider } from '@vidstack/react'
-import {
-	defaultLayoutIcons,
-	DefaultVideoLayout,
-} from "@vidstack/react/player/layouts/default";
+// import { MediaPlayer, MediaProvider } from '@vidstack/react'
+// import {
+// 	defaultLayoutIcons,
+// 	DefaultVideoLayout,
+// } from "@vidstack/react/player/layouts/default";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
 import React, { useState } from 'react'
@@ -10,8 +10,9 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import axios from 'axios';
 import { API } from '../../Essentials';
 import { socketemitfunc } from '../utils/SocketWrapper';
-import { setHiddenMsgs, setMessages, setincommsgs } from '../redux/slice/messageSlice';
+import { setHiddenMsgs, setMessages } from '../redux/slice/messageSlice';
 import { useSelector } from 'react-redux';
+import { IoDocumentSharp } from 'react-icons/io5';
 const PrivateChats = ({ data, d, i, user, convId, socket, dispatch, messages }) => {
 	const [click, setClick] = useState(false)
 	const [delopen, setDelopen] = useState(false)
@@ -86,6 +87,8 @@ const PrivateChats = ({ data, d, i, user, convId, socket, dispatch, messages }) 
 
 	return (
 		<>
+
+
 			{delopen && <div className='fixed inset-0 z-40 flex justify-center items-center w-screen h-screen'>
 				<div className='flex justify-center flex-col bg-red-700 items-center h-full w-[40%]'>
 					<div className='text-xl'>
@@ -112,18 +115,44 @@ const PrivateChats = ({ data, d, i, user, convId, socket, dispatch, messages }) 
 						<img src={user?.profilepic} className="w-full h-full" />
 					</div>}
 
-					<div className="text-[14px] mt-1">7:07</div>
+					<div className="text-[14px] mt-1">{d?.timestamp}</div>
 				</div>}
 				<div className="flex items-centers ">
 
 					{d?.typ === "message" && (
 						<div
-							className={`relative h-auto group flex justify-center items-center mt-6 ${data?.id === d?.sender?._id
+							className={`relative group h-auto  flex justify-center items-center mt-6 ${data?.id === d?.sender?._id
 								? "bg-[#0075ff] text-white p-2  rounded-l-2xl pn:max-sm:text-[14px] max-w-[320px] rounded-br-2xl "
 								: "bg-[#ffffff] p-2 rounded-r-2xl pn:max-sm:text-[14px] max-w-[320px] rounded-bl-2xl"
 								}`}
 						>
-							<div className="group-hover:pr-2">{d.status === "deleted" ? <div className='italic'>This Message was Deleted!</div> : d?.text}</div>
+							<div className="group-hover:pr-2">{d.status === "deleted" ? <div className='italic'>This Message was Deleted!</div> :
+								<>
+									{d?.text?.match(/https:\/\/[^\s]+/g) ? (
+										d?.text.split(/(https:\/\/[^\s]+)/g).map((part, index) => (
+											part.match(/https:\/\/[^\s]+/g) ? (
+												<a
+													key={index}
+													href={part}
+													target="_blank"
+													rel="noopener noreferrer"
+													download={part.endsWith('.pdf') || part.endsWith('.zip') ? part : undefined}
+													style={{ textDecoration: 'none', color: 'inherit' }}
+													onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+													onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+												>
+													{part}
+												</a>
+											) : (
+												part
+											)
+										))
+									) : (
+										d?.text
+									)}
+								</>
+
+							}</div>
 							<div onClick={() => setClick(true)} className={` ${data?.id === d?.sender?._id ? "absolute  hidden bg-transparent group-hover:block bg-sky-950 top-3 right-0" : "hidden"}`}>
 								<HiOutlineDotsVertical />
 							</div>
@@ -144,73 +173,192 @@ const PrivateChats = ({ data, d, i, user, convId, socket, dispatch, messages }) 
 
 					{d?.typ == "image" && (
 						<div
-							className={`${data?.id === d?.sender?._id
+							className={`relative group ${data?.id === d?.sender?._id
 								? "bg-[#0075ff] text-white p-2 rounded-l-2xl mt-4 rounded-br-2xl "
 								: "bg-[#ffffff] p-2 rounded-r-2xl mt-4 rounded-bl-2xl"
 								}`}
 						>
-							<img
-								src={d?.url}
-								className="h-[145px] sm:w-[240px] sm:h-[240px] w-[145px] rounded-2xl  bg-yellow-300 "
-							/>
+							<div className="group-hover:pr-2">{d.status === "deleted" ? <div className='italic'>This Message was Deleted!</div> :
+								<img
+									src={d?.url}
+									className="h-[145px] sm:w-[240px] sm:h-[240px] w-[145px] rounded-2xl  bg-yellow-300 "
+								/>
+
+							}</div>
+							<div onClick={() => setClick(true)} className={` ${data?.id === d?.sender?._id ? "absolute  hidden bg-transparent group-hover:block bg-sky-950 top-3 right-0" : "hidden"}`}>
+								<HiOutlineDotsVertical />
+							</div>
+							{click && <div className={` ${data?.id === d?.sender?._id ? "absolute z-40 bg-black top-8 rounded-md p-3 -left-[40px] w-[100px] h-auto" : "hidden"}`}>
+								{
+									d?.hidden?.includes(data?.id) ? <div onClick={() => UnhideChats(d?.mesId)}
+										className="text-sm">Un Hide msg</div> : <div onClick={() => hideChats(d?.mesId)}
+											className="text-sm">Hide msg</div>
+								}
+								<div onClick={() => deletepopUp(d?.mesId)} className='text-sm'>Delete msg</div>
+
+								{/* <div></div>
+				<div></div> */}
+							</div>}
 						</div>
 					)}
+
+					{d?.typ == "doc" && (
+
+
+						<div
+							className={`relative group ${data?.id === d?.sender?._id
+								? "bg-[#0075ff] text-white p-2 rounded-l-2xl mt-4 rounded-br-2xl "
+								: "bg-[#ffffff] p-2 rounded-r-2xl mt-4 rounded-bl-2xl"
+								}`}
+						>
+							<div className="group-hover:pr-2">{d.status === "deleted" ? <div className='italic'>This Message was Deleted!</div> :
+								<a href={d.url} download={d.content.name} className=' flex justify-center bg-white p-3 rounded-xl text-black items-center gap-1 '>
+									<div><IoDocumentSharp className="text-2xl" />
+									</div>
+									<div className='text-sm font-semibold'>{d?.content?.name}</div>
+								</a>
+
+							}</div>
+
+							<div onClick={() => setClick(true)} className={` ${data?.id === d?.sender?._id ? "absolute  hidden bg-transparent group-hover:block bg-sky-950 top-3 right-0" : "hidden"}`}>
+								<HiOutlineDotsVertical />
+							</div>
+							{click && <div className={` ${data?.id === d?.sender?._id ? "absolute z-40 bg-black top-8 rounded-md p-3 -left-[40px] w-[100px] h-auto" : "hidden"}`}>
+								{
+									d?.hidden?.includes(data?.id) ? <div onClick={() => UnhideChats(d?.mesId)}
+										className="text-sm">Un Hide msg</div> : <div onClick={() => hideChats(d?.mesId)}
+											className="text-sm">Hide msg</div>
+								}
+								<div onClick={() => deletepopUp(d?.mesId)} className='text-sm'>Delete msg</div>
+
+								{/* <div></div>
+				<div></div> */}
+							</div>}
+						</div>
+
+					)}
+
 					{d?.typ == "video" && (
 						<div
-							className={`${data?.id === d?.sender?._id
+							className={`relative group ${data?.id === d?.sender?._id
 								? " bg-[#0075ff] text-white h-[145px] sm:w-[240px] mt-4 sm:h-[240px] w-[145px] flex justify-center items-center p-2 rounded-l-2xl rounded-br-2xl"
 								: "bg-[#ffffff] h-[145px] sm:w-[240px] mt-4 sm:h-[240px] w-[145px] flex justify-center items-center p-2 rounded-r-2xl rounded-bl-2xl"
 								}`}
 						>
 							{/* <ReactPlayer url={d?.url} controls /> */}
 
-							<MediaPlayer src={d?.url} onQualitiesChange={480}>
+							{/* <MediaPlayer src={d?.url} onQualitiesChange={480}>
 								<MediaProvider />
 								<DefaultVideoLayout
 									thumbnails={d?.url}
 									icons={defaultLayoutIcons}
 								/>
-							</MediaPlayer>
+							</MediaPlayer> */}
 
-							{/* <video src={d?.url} className="h-[145px] w-[145px] rounded-2xl bg-yellow-300 " controls /> */}
+							<div className="group-hover:pr-2">{d.status === "deleted" ? <div className='italic'>This Message was Deleted!</div> :
+								<video src={d?.url} className="h-[145px] w-[145px] rounded-2xl bg-yellow-300 " controls />
+
+							}</div>
+
+
+							<div onClick={() => setClick(true)} className={` ${data?.id === d?.sender?._id ? "absolute  hidden bg-transparent group-hover:block bg-sky-950 top-3 right-0" : "hidden"}`}>
+								<HiOutlineDotsVertical />
+							</div>
+							{click && <div className={` ${data?.id === d?.sender?._id ? "absolute z-40 bg-black top-8 rounded-md p-3 -left-[40px] w-[100px] h-auto" : "hidden"}`}>
+								{
+									d?.hidden?.includes(data?.id) ? <div onClick={() => UnhideChats(d?.mesId)}
+										className="text-sm">Un Hide msg</div> : <div onClick={() => hideChats(d?.mesId)}
+											className="text-sm">Hide msg</div>
+								}
+								<div onClick={() => deletepopUp(d?.mesId)} className='text-sm'>Delete msg</div>
+
+								{/* <div></div>
+				<div></div> */}
+							</div>}
 						</div>
 					)}
 					{d?.typ == "glimpse" && (
-						<div className="bg-[#0075ff] text-white p-2 rounded-r-2xl rounded-bl-2xl">
-							<video
-								src={d?.url}
-								className="h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-								controls
-							/>
+						<div className={`relative group text-white ${data?.id === d?.sender?._id
+							? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
+							: "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
+							}`}>
+
+							<div className="group-hover:pr-2">{d.status === "deleted" ? <div className='italic'>This Message was Deleted!</div> :
+								<video
+									src={d?.url}
+									className="h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
+									controls
+								/>
+							}</div>
+
+							<div onClick={() => setClick(true)} className={` ${data?.id === d?.sender?._id ? "absolute  hidden bg-transparent group-hover:block bg-sky-950 top-3 right-0" : "hidden"}`}>
+								<HiOutlineDotsVertical />
+							</div>
+							{click && <div className={` ${data?.id === d?.sender?._id ? "absolute z-40 bg-black top-8 rounded-md p-3 -left-[40px] w-[100px] h-auto" : "hidden"}`}>
+								{
+									d?.hidden?.includes(data?.id) ? <div onClick={() => UnhideChats(d?.mesId)}
+										className="text-sm">Un Hide msg</div> : <div onClick={() => hideChats(d?.mesId)}
+											className="text-sm">Hide msg</div>
+								}
+								<div onClick={() => deletepopUp(d?.mesId)} className='text-sm'>Delete msg</div>
+
+								{/* <div></div>
+				<div></div> */}
+							</div>}
 						</div>
 					)}
 					{d?.typ == "post" && (
 						<div
-							className={`${data?.id === d?.sender?._id
+							className={`relative group ${data?.id === d?.sender?._id
 								? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
 								: "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
 								}`}
 						>
 							<div className="">
-								{d?.content.type.startsWith("image") ? (
-									<img
-										className={`${data?.id === d?.sender?._id
-											? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-											: "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
-											}`}
-										src={d?.url}
-										alt=""
-									/>
-								) : (
-									<video
-										src={d?.url}
-										className={`${data?.id === d?.sender?._id
-											? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-											: "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
-											}`}
-										controls
-									/>
-								)}
+
+								<div className="group-hover:pr-2">{d.status === "deleted" ? <div className='italic'>This Message was Deleted!</div> :
+									<div>
+										{d?.content.type.startsWith("image") ? (
+
+											<img
+												className={`${data?.id === d?.sender?._id
+													? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
+													: "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
+													}`}
+												src={d?.url}
+												alt=""
+											/>
+
+										) : (
+											<video
+												src={d?.url}
+												className={`${data?.id === d?.sender?._id
+													? "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
+													: "h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300"
+													}`}
+												controls
+											/>
+										)}
+
+									</div>
+								}</div>
+
+
+
+								<div onClick={() => setClick(true)} className={` ${data?.id === d?.sender?._id ? "absolute  hidden bg-transparent group-hover:block bg-sky-950 top-3 right-0" : "hidden"}`}>
+									<HiOutlineDotsVertical />
+								</div>
+								{click && <div className={` ${data?.id === d?.sender?._id ? "absolute z-40 bg-black top-8 rounded-md p-3 -left-[40px] w-[100px] h-auto" : "hidden"}`}>
+									{
+										d?.hidden?.includes(data?.id) ? <div onClick={() => UnhideChats(d?.mesId)}
+											className="text-sm">Un Hide msg</div> : <div onClick={() => hideChats(d?.mesId)}
+												className="text-sm">Hide msg</div>
+									}
+									<div onClick={() => deletepopUp(d?.mesId)} className='text-sm'>Delete msg</div>
+
+									{/* <div></div>
+				<div></div> */}
+								</div>}
 							</div>
 							<div className="h-[45px] sm:h-[40px] sm:w-[240px] w-[145px] rounded-2xl ">
 								{d?.text}
@@ -222,25 +370,47 @@ const PrivateChats = ({ data, d, i, user, convId, socket, dispatch, messages }) 
 					)}
 					{d?.typ == "product" && (
 						<div
-							className={`${data?.id === d?.sender?._id
+							className={`relative group ${data?.id === d?.sender?._id
 								? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
 								: "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
 								}`}
 						>
 							<div>
-								{d?.content.type.startsWith("image") ? (
-									<img
-										src={d?.url}
-										alt=""
-										className="h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
-									/>
-								) : (
-									<video
-										src={d?.url}
-										controls
-										className="h-[145px] w-[145px] sm:h-[240px] sm:w-[240px] rounded-2xl bg-yellow-300 "
-									/>
-								)}
+
+								<div className="group-hover:pr-2">{d.status === "deleted" ? <div className='italic'>This Message was Deleted!</div> :
+
+									<div>
+										{d?.content.type.startsWith("image") ? (
+											<img
+												src={d?.url}
+												alt=""
+												className="h-[145px] sm:h-[240px] sm:w-[240px] w-[145px] rounded-2xl bg-yellow-300 "
+											/>
+										) : (
+											<video
+												src={d?.url}
+												controls
+												className="h-[145px] w-[145px] sm:h-[240px] sm:w-[240px] rounded-2xl bg-yellow-300 "
+											/>
+										)}
+									</div>
+								}</div>
+
+
+								<div onClick={() => setClick(true)} className={` ${data?.id === d?.sender?._id ? "absolute  hidden bg-transparent group-hover:block bg-sky-950 top-3 right-0" : "hidden"}`}>
+									<HiOutlineDotsVertical />
+								</div>
+								{click && <div className={` ${data?.id === d?.sender?._id ? "absolute z-40 bg-black top-8 rounded-md p-3 -left-[40px] w-[100px] h-auto" : "hidden"}`}>
+									{
+										d?.hidden?.includes(data?.id) ? <div onClick={() => UnhideChats(d?.mesId)}
+											className="text-sm">Un Hide msg</div> : <div onClick={() => hideChats(d?.mesId)}
+												className="text-sm">Hide msg</div>
+									}
+									<div onClick={() => deletepopUp(d?.mesId)} className='text-sm'>Delete msg</div>
+
+									{/* <div></div>
+				<div></div> */}
+								</div>}
 							</div>
 							<div className="w-[145px] sm:w-[240px] overflow-hidden text-[14px] h-[80px]">
 								{d?.text}
@@ -252,12 +422,32 @@ const PrivateChats = ({ data, d, i, user, convId, socket, dispatch, messages }) 
 					)}
 					{d?.typ == "gif" && (
 						<div>
-							<div className="max-h-[145px] max-w-[145px] sm:max-h-[230px] sm:max-w-[230px]">
-								<img
-									className="h-full w-full object-contain"
-									src={d?.url}
-									alt="gif"
-								/>
+							<div className={`relative group  ${data?.id === d?.sender?._id
+								? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
+								: "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
+								}`}>
+
+								<div className="group-hover:pr-2">{d.status === "deleted" ? <div className='italic'>This Message was Deleted!</div> :
+									<img
+										className="h-full w-full object-contain"
+										src={d?.url}
+										alt="gif"
+									/>
+								}</div>
+								<div onClick={() => setClick(true)} className={` ${data?.id === d?.sender?._id ? "absolute  hidden bg-transparent group-hover:block bg-sky-950 top-3 right-0" : "hidden"}`}>
+									<HiOutlineDotsVertical />
+								</div>
+								{click && <div className={` ${data?.id === d?.sender?._id ? "absolute z-40 bg-black top-8 rounded-md p-3 -left-[40px] w-[100px] h-auto" : "hidden"}`}>
+									{
+										d?.hidden?.includes(data?.id) ? <div onClick={() => UnhideChats(d?.mesId)}
+											className="text-sm">Un Hide msg</div> : <div onClick={() => hideChats(d?.mesId)}
+												className="text-sm">Hide msg</div>
+									}
+									<div onClick={() => deletepopUp(d?.mesId)} className='text-sm'>Delete msg</div>
+
+									{/* <div></div>
+				<div></div> */}
+								</div>}
 							</div>
 						</div>
 					)}
@@ -269,9 +459,9 @@ const PrivateChats = ({ data, d, i, user, convId, socket, dispatch, messages }) 
 						<img src={data?.dp} className="w-full h-full" />
 					</div>}
 
-					<div className="text-[14px] mt-1">7:07</div>
+					<div className="text-[14px] mt-1">{d?.timestamp}</div>
 				</div>}
-			</div>
+			</div >
 
 		</>
 	)

@@ -30,6 +30,8 @@ import {
   SuggestionBar, // an optional UI component that displays trending searches and channel / username results
 } from "@giphy/react-components";
 import Input from "../../../../component/Input";
+import { PiHandsClapping } from "react-icons/pi";
+import { VscSend } from "react-icons/vsc";
 
 const SearchExperienceComNewForYou = ({ params }) => (
   <SearchContextManager apiKey={"BhiAZ1DOyIHjZlGxrtP2NozVsmpJ27Kz"}>
@@ -174,28 +176,28 @@ function Components({ params }) {
         type === "image"
           ? "image"
           : type === "video"
-          ? "video"
-          : type === "doc"
-          ? "doc"
-          : "doc",
+            ? "video"
+            : type === "doc"
+              ? "doc"
+              : "doc",
         {
           uri: content,
           type:
             type === "image"
               ? "image/jpg"
               : type === "video"
-              ? "video/mp4"
-              : type === "doc"
-              ? content?.type
-              : content?.type,
+                ? "video/mp4"
+                : type === "doc"
+                  ? content?.type
+                  : content?.type,
           name:
             type === "image"
               ? "image.jpg"
               : type === "video"
-              ? "video.mp4"
-              : type === "doc"
-              ? "doc.pdf"
-              : "doc.pdf",
+                ? "video.mp4"
+                : type === "doc"
+                  ? "doc.pdf"
+                  : "doc.pdf",
         }
       );
       form.append("data", JSON.stringify(mess));
@@ -276,7 +278,7 @@ function Components({ params }) {
         socket,
       });
 
-      return () => {};
+      return () => { };
     }
   };
 
@@ -312,238 +314,42 @@ function Components({ params }) {
       socket,
     });
 
-    return () => {};
+    return () => { };
   };
 
   return (
-    <div className="h-screen w-[60vw] px-2">
+    <div className="h-screen w-full">
       {/* for Joined Community */}
       {isjoined ? (
-        <div className="bg-red-300  overflow-auto">
-          <div className="flex bg-slate-400 fixed w-full z-10 h-[55px] items-center px-2 gap-2">
+        <div className="h-screen relative">
+          <div className="flex items-center h-[60px] absolute top-0 z-10 w-full  bg-[#f4f4f4]">
             <div>
               <img
                 src={dp}
-                className="h-[40px] w-[40px] rounded-2xl bg-yellow-300 "
+                className="h-[45px] w-[45px] rounded-[19px] bg-yellow-300 "
               />
             </div>
-            <div>{title}</div>
-          </div>
-
-          <div
-            className="flex justify-center w-full 
-         items-center
-         "
-          >
-            {topics.map((d, i) => (
-              <div
-                onClick={() => handleFetch(d?._id, d?.nature)}
-                key={i}
-                className="w-full mt-[55px]"
-              >
-                {d?.title}
-              </div>
-            ))}
-          </div>
-          {currentState === "post" && (
-            <div>
-              {com.map((d, i) => (
-                <div
-                  key={i}
-                  className="bg-red-300 w-[30vw] flex flex-col relative pn:max-sm:p-3 p-4 pn:max-md:rounded-2xl dark:bg-[#242424]"
-                >
-                  {/* top */}
-                  <div className="w-[100%] rounded-2xl flex flex-col items-center ">
-                    <div className="h-[55px] px-2 w-[100%] flex flex-row items-center">
-                      <div className=" flex object-scale-down  h-[100%] items-center">
-                        {/* <div className="h-[45px] w-[45px] rounded-2xl bg-slate-200 animate-pulse "></div> */}
-                        <img
-                          src={d?.dpdata}
-                          className="h-[40px] w-[40px] rounded-2xl bg-yellow-300 "
-                        />
-                      </div>
-                      {/* Community name */}
-
-                      <div className="flex flex-col px-2">
-                        <div className="flex flex-col ">
-                          <div className="text-[14px] font-medium">{title}</div>
-                          <div className="text-[12px]">By {d?.posts?.sender?.fullname}</div>
-                        </div>
-                      </div>
-
-                      {/* Animation of join nd bell */}
-                    </div>
-                  </div>
-
-                  {/* POst */}
-
-                  <div className="h-[300px] rounded-2xl bg-slate-200  w-full flex justify-center items-center ">
-                    {d?.urls.map((f) => (
-                      <div className="h-full">
-                        {f?.type.startsWith("image") ? (
-                          <img src={f?.content} className="max-h-full" />
-                        ) : (
-                          // <video src={f?.content} controls className="max-h-full" />
-                          <MediaPlayer src={f?.content} onQualitiesChange={480}>
-                            <MediaProvider />
-                            <DefaultVideoLayout
-                              thumbnails={f?.content}
-                              icons={defaultLayoutIcons}
-                            />
-                          </MediaPlayer>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="h-[55px] px-2 py-1 w-[100%] flex flex-col">
-                    <div className="text-[14px] text-black w-[120px] h-[20px] bg-slate-200 rounded-lg my-1">
-                      {d?.posts.title}
-                    </div>
-                    <div>{d?.posts.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* {
-          currentState === "chat" &&
-          <div>
-            {message?.map((d, i) => (
-              <div key={i}>{d?.text}</div>
-            ))}
-          </div>
-        } */}
-
-          {currentState === "chat" && (
-            <div className="">
-              {messages?.map((d, i) => (
-                <div
-                  key={i}
-                  className={`flex ${
-                    data?.id === d?.sender?._id
-                      ? "justify-end"
-                      : "justify-start"
-                  }  w-full items-center `}
-                >
-                  <div className="flex gap-1 py-2 pl-1"> <div className=" flex object-scale-down  h-[100%] items-center">
-                        {/* <div className="h-[45px] w-[45px] rounded-2xl bg-slate-200 animate-pulse "></div> */}
-                        <img
-                          src={d?.dpdata}
-                          className="h-[40px] w-[40px] rounded-2xl bg-yellow-300 "
-                        />
-                      </div>
-                  <div className="flex flex-col items-start ">
-                    <div className="">{d?.sender?.fullname}</div>
-                    {d?.typ === "message" && <div className="bg-[#0075ff] p-2 rounded-bl-[10px] rounded-r-[10px]">{d?.text}</div>}
-                    {d?.typ === "image" && (
-                      <div className="bg-[#0075ff] p-2 rounded-bl-[10px] rounded-r-[10px]">
-                        <img
-                          src={d?.url}
-                          className="h-[145px] w-[145px] rounded-2xl bg-yellow-300 "
-                        />
-                      </div>
-                    )}
-                    {d?.typ == "video" && (
-                      <div className="flex justify-center items-center">
-                        {/* <ReactPlayer url={d?.url} controls /> */}
-
-                        <MediaPlayer src={d?.url} onQualitiesChange={480}>
-                          <MediaProvider />
-                          <DefaultVideoLayout
-                            thumbnails={d?.url}
-                            icons={defaultLayoutIcons}
-                          />
-                        </MediaPlayer>
-
-                        {/* <video src={d?.url} className="h-[145px] w-[145px] rounded-2xl bg-yellow-300 " controls /> */}
-                      </div>
-                    )}
-                    {d?.typ == "gif" && (
-                      <div className=" p-2 rounded-bl-[10px] rounded-r-[10px]">
-                        <img
-                          src={d?.url}
-                          className="h-[145px] w-[145px] bg-yellow-300 "
-                          alt="gif"
-                        />
-                      </div>
-                    )}
-                  </div>
-                  </div>
-                </div>
-              ))}
-<div className="bg-pink-300 fixed w-full bottom-0">
-              <Input
-                sendMessages={sendMessage}
-                sendgif={sendgif}
-                handleSend={handleSend}
-                setContent={setContent}
-                setMessage={setMessage}
-                setType={setType}
-                type={type}
-                name={name}
-                content={content}
-                size={size}
-                message={msgs}
-                dispatch={dispatch}
-              />
-</div>
-<div className="hidden">
-              <SearchBar />
-              {/* <SuggestionBar /> */}
-
-              <Grid
-                width={800}
-                columns={3}
-                gutter={6}
-                onGifClick={(item, e) => {
-                  e.preventDefault();
-                  console.log(item, "item");
-
-                  dispatch(setType("gif"));
-                  dispatch(setMessage(item?.images.downsized.url));
-                }}
-                fetchGifs={fetchGifs}
-                key={searchKey}
-              />
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        // for unjoined community
-        <div className="max-h-screen bg-red-300 w-full relative overflow-y-scroll">
-          <div className="absolute w-full z-30 h-full bottom-0 right-0 top-0 left-0">
-            <div className="flex h-full  justify-center mb-10 w-full items-end">
-              <div
-                onClick={() => joinmembers(params?.id)}
-                className="flex bg-blue-900 p-3 text-white justify-center w-full items-end"
-              >
-                Join Community
-              </div>
+            <div className="pl-2">
+              <div>{title}</div>
+              <div className="text-[12px]">100 member</div>
             </div>
           </div>
-          <div className=" z-40 w-full bg-red-300  h-full  bottom-0 right-0 top-0 left-0">
-            <div>
-              <img
-                src={dp}
-                className="h-[45px] w-[45px] rounded-2xl bg-yellow-300 "
-              />
-            </div>
-            <div>{title}</div>
 
+          <div className="h-[100%] bg-[#f7f7f7] pt-[60px] w-full relative overflow-y-scroll">
             <div
-              className="flex justify-center  w-full 
-         items-center
-         "
+              className="flex justify-center w-full 
+              items-center py-2
+              "
             >
               {topics.map((d, i) => (
                 <div
                   onClick={() => handleFetch(d?._id, d?.nature)}
                   key={i}
-                  className="w-full"
+                  className="w-full flex justify-center"
                 >
-                  {d?.title}
+                  <div className="flex items-center bg-[#f2f2f2] px-4 rounded-lg ">
+                    {d?.title}
+                  </div>
                 </div>
               ))}
             </div>
@@ -552,65 +358,338 @@ function Components({ params }) {
                 {com.map((d, i) => (
                   <div
                     key={i}
-                    className="bg-slate-50  pn:max-sm:p-3 p-4 pn:max-md:rounded-2xl dark:bg-[#242424]"
+                    className="pt-2 pn:max-sm:p-3 p-4 pn:max-md:rounded-2xl dark:bg-[#242424]"
                   >
-                    <div className="w-[100%] rounded-2xl flex flex-col items-center ">
-                      <div className="h-[55px] px-2 w-[100%] flex flex-row items-center ">
-                        <div className="w-[15%] flex object-scale-down items-center h-[100%] ">
-                          {/* <div className="h-[45px] w-[45px] rounded-2xl bg-slate-200 animate-pulse "></div> */}
-                          <img
-                            src={d?.dpdata}
-                            className="h-[45px] w-[45px] rounded-2xl bg-yellow-300 "
-                          />
-                        </div>
-                        {/* Community name */}
-
-                        <div className="flex flex-col w-[60%] justify-center px-2 items-start">
-                          <div className="flex flex-col space-y-1 items-center">
-                            <div>{title}</div>
-                            <div>By {d?.posts?.sender?.fullname}</div>
+                    {/* POst */}
+                    <div className="bg-white p-2 max-w-[360px] rounded-xl">
+                      {/* header */}
+                      <div className="w-[100%] rounded-2xl flex flex-col items-center ">
+                        <div className=" w-[100%] flex flex-row items-center ">
+                          <div className=" flex object-scale-down items-center h-[100%] ">
+                            {/* <div className="h-[45px] w-[45px] rounded-2xl bg-slate-200 animate-pulse "></div> */}
+                            <img
+                              src={d?.dpdata}
+                              className="h-[40px] w-[40px] rounded-2xl bg-yellow-300 "
+                            />
+                          </div>
+                          {/* Community name */}
+                          <div className="flex flex-col justify-center px-2 items-start">
+                            <div className="flex flex-col ">
+                              <div className="text-[14px] font-semibold">
+                                {title}
+                              </div>
+                              <div className="font-medium text-[#414141] text-[12px]">
+                                By {d?.posts?.sender?.fullname}
+                              </div>
+                            </div>
                           </div>
                         </div>
-
-                        {/* Animation of join nd bell */}
                       </div>
-                    </div>
-
-                    {/* POst */}
-
-                    <div className="h-[200px] rounded-2xl bg-slate-200  w-[360px] flex justify-center items-center ">
-                      {d?.urls.map((f) => (
-                        <div className="h-full">
-                          {f?.type.startsWith("image") ? (
-                            <img src={f?.content} className="max-h-full" />
-                          ) : (
-                            <video
-                              src={f?.content}
-                              controls
-                              className="max-h-full"
-                            />
-                          )}
+                      <div className="h-[200px] mt-2 rounded-2xl bg-slate-200 flex justify-center items-center ">
+                        {d?.urls.map((f) => (
+                          <div className="h-full">
+                            {f?.type.startsWith("image") ? (
+                              <img src={f?.content} className="max-h-full" />
+                            ) : (
+                              // <video
+                              //   src={f?.content}
+                              //   controls
+                              //   className="max-h-full"
+                              // />
+                              <MediaPlayer src={f?.content} onQualitiesChange={480}>
+                                <MediaProvider />
+                                <DefaultVideoLayout
+                                  thumbnails={f?.content}
+                                  icons={defaultLayoutIcons}
+                                />
+                              </MediaPlayer>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <div className=" px-2 mt-2 py-1 w-[100%] rounded-lg flex flex-col">
+                        <div className="text-[14px] truncate text-black w-full ">
+                          {d?.posts.title}
                         </div>
-                      ))}
-                    </div>
-                    <div className="h-[55px] px-2 py-1 w-[100%] flex flex-col">
-                      <div className="text-[14px] text-black w-[120px] h-[20px] bg-slate-200 rounded-lg my-1">
-                        {d?.posts.title}
+                        <div className="text-[14px] truncate">
+                          {d?.posts.desc}
+                        </div>
                       </div>
-                      <div>{d?.posts.desc}</div>
+                      <div className=" px-2 mt-1  py-1 w-[100%] rounded-lg flex items-center">
+                        <div className="text-[14px] text-black w-full ">
+                          liked by divyansh
+                        </div>
+                        <div className="flex gap-2">
+                          <div className="flex justify-center rounded-xl items-center gap-1 p-2 bg-[#f4f4f4]">
+                            <PiHandsClapping />
+                            <div className="text-[12px]">12</div>
+                          </div>
+                          <div className="rounded-xl bg-[#f4f4f4] p-2">
+                            <VscSend />
+                          </div>
+                        </div>
+                      </div>
+                      <div className=" px-2 mt-1  py-1 w-[100%] rounded-lg bg-slate-200  flex items-center">
+                        <div className="text-[14px] text-black w-full ">
+                          comment .... .... ...
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             )}
 
+            {/* {
+          currentState === "chat" &&
+          <div>
+            {message?.map((d, i) => (
+              <div key={i}>{d?.text}</div>
+            ))}
+          </div>
+        } */}
+
             {currentState === "chat" && (
-              <div>
+              <div className="relative h-full w-full">
                 {messages?.map((d, i) => (
-                  <div key={i}>{d?.text}</div>
+                  <div
+                    key={i}
+                    className={`flex ${data?.id === d?.sender?._id
+                      ? "justify-end"
+                      : "justify-start"
+                      }  w-full items-center relative`}
+                  >
+                    <div className="flex gap-1 py-2 pl-1">
+                      {" "}
+                      <div className=" flex object-scale-down  h-[100%] items-center">
+                        {/* <div className="h-[45px] w-[45px] rounded-2xl bg-slate-200 animate-pulse "></div> */}
+                        <img
+                          src={d?.dpdata}
+                          className="h-[40px] w-[40px] rounded-2xl bg-yellow-300 "
+                        />
+                      </div>
+                      <div className="flex flex-col items-start ">
+                        <div className="">{d?.sender?.fullname}</div>
+                        {d?.typ === "message" && (
+                          <div className="bg-[#0075ff] p-2 rounded-bl-[10px] rounded-r-[10px]">
+                            {d?.text}
+                          </div>
+                        )}
+                        {d?.typ === "image" && (
+                          <div className="bg-[#0075ff] p-2 rounded-bl-[10px] rounded-r-[10px]">
+                            <img
+                              src={d?.url}
+                              className="h-[145px] w-[145px] rounded-2xl bg-yellow-300 "
+                            />
+                          </div>
+                        )}
+                        {d?.typ == "video" && (
+                          <div className="flex justify-center items-center">
+                            {/* <ReactPlayer url={d?.url} controls /> */}
+
+                            <MediaPlayer src={d?.url} onQualitiesChange={480}>
+                              <MediaProvider />
+                              <DefaultVideoLayout
+                                thumbnails={d?.url}
+                                icons={defaultLayoutIcons}
+                              />
+                            </MediaPlayer>
+
+                            {/* <video src={d?.url} className="h-[145px] w-[145px] rounded-2xl bg-yellow-300 " controls /> */}
+                          </div>
+                        )}
+                        {d?.typ == "gif" && (
+                          <div className=" p-2 rounded-bl-[10px] rounded-r-[10px]">
+                            <img
+                              src={d?.url}
+                              className="h-[145px] w-[145px] bg-yellow-300 "
+                              alt="gif"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 ))}
+                <div className="bg-pink-300 fixed w-full bottom-0">
+                  <Input
+                    sendMessages={sendMessage}
+                    sendgif={sendgif}
+                    handleSend={handleSend}
+                    setContent={setContent}
+                    setMessage={setMessage}
+                    setType={setType}
+                    type={type}
+                    name={name}
+                    content={content}
+                    size={size}
+                    message={msgs}
+                    dispatch={dispatch}
+                  />
+                </div>
+                <div className="hidden">
+                  <SearchBar />
+                  {/* <SuggestionBar /> */}
+
+                  <Grid
+                    width={800}
+                    columns={3}
+                    gutter={6}
+                    onGifClick={(item, e) => {
+                      e.preventDefault();
+                      console.log(item, "item");
+
+                      dispatch(setType("gif"));
+                      dispatch(setMessage(item?.images.downsized.url));
+                    }}
+                    fetchGifs={fetchGifs}
+                    key={searchKey}
+                  />
+                </div>
               </div>
             )}
+          </div>
+        </div>
+      ) : (
+        <div className="h-screen relative">
+          <div className="flex items-center h-[60px] absolute top-0 z-10 w-full  bg-[#f4f4f4]">
+            <div>
+              <img
+                src={dp}
+                className="h-[45px] w-[45px] rounded-[19px] bg-yellow-300 "
+              />
+            </div>
+            <div className="pl-2">
+              <div>{title}</div>
+              <div className="text-[12px]">100 member</div>
+            </div>
+          </div>
+          <div className=" w-full z-10 absolute bottom-0 ">
+            <div className="flex h-full  justify-center mb-0 w-full items-end">
+              <div
+                onClick={() => joinmembers(params?.id)}
+                className="flex bg-blue-600 p-3 text-white justify-center w-full items-end"
+              >
+                Join Community
+              </div>
+            </div>
+          </div>
+
+          {/* // for unjoined community */}
+          <div className="h-[100%] bg-[#f7f7f7] pt-[60px] pb-[100px] w-full relative overflow-y-scroll">
+            <div className=" z-0 w-full  h-full  bottom-0 right-0 top-0 left-0">
+              <div
+                className="flex justify-center w-full 
+         items-center py-2
+         "
+              >
+                {topics.map((d, i) => (
+                  <div
+                    onClick={() => handleFetch(d?._id, d?.nature)}
+                    key={i}
+                    className="w-full flex justify-center"
+                  >
+                    <div className="flex items-center bg-[#f2f2f2] px-4 rounded-lg ">
+                      {d?.title}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {currentState === "post" && (
+                <div>
+                  {com.map((d, i) => (
+                    <div
+                      key={i}
+                      className="  pt-2 pn:max-sm:p-3 p-4 pn:max-md:rounded-2xl dark:bg-[#242424]"
+                    >
+                      {/* POst */}
+                      <div className="bg-white p-2 max-w-[360px] rounded-xl">
+                        {/* header */}
+                        <div className="w-[100%] rounded-2xl flex flex-col items-center ">
+                          <div className=" w-[100%] flex flex-row items-center ">
+                            <div className=" flex object-scale-down items-center h-[100%] ">
+                              {/* <div className="h-[45px] w-[45px] rounded-2xl bg-slate-200 animate-pulse "></div> */}
+                              <img
+                                src={d?.dpdata}
+                                className="h-[40px] w-[40px] rounded-2xl bg-yellow-300 "
+                              />
+                            </div>
+                            {/* Community name */}
+                            <div className="flex flex-col justify-center px-2 items-start">
+                              <div className="flex flex-col ">
+                                <div className="text-[14px] font-semibold">
+                                  {title}
+                                </div>
+                                <div className="font-medium text-[#414141] text-[12px]">
+                                  By {d?.posts?.sender?.fullname}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="h-[200px] mt-2 rounded-2xl bg-slate-200 flex justify-center items-center ">
+                          {d?.urls.map((f) => (
+                            <div className="h-full">
+                              {f?.type.startsWith("image") ? (
+                                <img src={f?.content} className="max-h-full" />
+                              ) : (
+                                // <video
+                                //   src={f?.content}
+                                //   controls
+                                //   className="max-h-full"
+                                // />
+                                <MediaPlayer src={f?.content} onQualitiesChange={480}>
+                                  <MediaProvider />
+                                  <DefaultVideoLayout
+                                    thumbnails={f?.content}
+                                    icons={defaultLayoutIcons}
+                                  />
+                                </MediaPlayer>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                        <div className=" px-2 mt-2 py-1 w-[100%] rounded-lg flex flex-col">
+                          <div className="text-[14px] truncate text-black w-full ">
+                            {d?.posts.title}
+                          </div>
+                          <div className="text-[14px] truncate">
+                            {d?.posts.desc}
+                          </div>
+                        </div>
+                        <div className=" px-2 mt-1  py-1 w-[100%] rounded-lg flex items-center">
+                          <div className="text-[14px] text-black w-full ">
+                            liked by divyansh
+                          </div>
+                          <div className="flex gap-2">
+                            <div className="flex justify-center rounded-xl items-center gap-1 p-2 bg-[#f4f4f4]">
+                              <PiHandsClapping />
+                              <div className="text-[12px]">12</div>
+                            </div>
+                            <div className="rounded-xl bg-[#f4f4f4] p-2">
+                              <VscSend />
+                            </div>
+                          </div>
+                        </div>
+                        <div className=" px-2 mt-1  py-1 w-[100%] rounded-lg bg-slate-200  flex items-center">
+                          <div className="text-[14px] text-black w-full ">
+                            comment .... .... ...
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {currentState === "chat" && (
+                <div>
+                  {messages?.map((d, i) => (
+                    <div key={i}>{d?.text}</div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

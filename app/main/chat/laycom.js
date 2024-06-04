@@ -10,9 +10,13 @@ import Chats from "./../../component/Chats";
 import { useDispatch } from "react-redux";
 import { setVisible } from "../../redux/slice/anotherSlice";
 import { useSearchParams } from "next/navigation";
+import { IoCheckmark } from "react-icons/io5";
+import { RxCross2 } from "react-icons/rx";
 
 export default function ChatLayout({ children }) {
 	const [data, setData] = useState([]);
+	const [checkRequest, setCheckRequest] = useState(false)
+	const [request, setRequest] = useState([])
 	const { data: user } = useAuthContext();
 	const [load, setLoad] = useState(false);
 	const [click, setClick] = useState(false);
@@ -64,15 +68,58 @@ export default function ChatLayout({ children }) {
 	const fetchallChats = async () => {
 		try {
 			const res = await axios.get(`${API}/fetchallchatsnew/${user?.id}`);
-			// console.log(res.data)
-			setData(res.data.conv);
+			// setRequest(res.data.conv);
+			setData(res.data.conv)
 		} catch (error) {
 			console.log(error);
 		}
 	};
 
+	// accept or reject
+	const handleStatus = async (index, status, d) => {
+		try {
+			const res = await axios.post(`${API}/acceptorrejectmesgreq`, {
+				reciever: user.id,
+				sender: d?.req?.id?._id,
+				status: status,
+			});
+			// nav.goBack();
+			if (res?.data?.success) {
+				if (status === 'accept') {
+					const updatedData = request.filter((_, i) => i !== index);
+					setRequest(updatedData);
+				} else {
+					const updatedData = request.filter((_, i) => i !== index);
+					setRequest(updatedData);
+				}
+			}
+		} catch (e) {
+			console.log(e)
+		}
+	};
+
+	// fetch Requests
+	const fetchreqs = async () => {
+		try {
+			const res = await axios.get(`${API}/fetchallmsgreqs/${user.id}`);
+
+			if (res?.data?.success) {
+				const d = res?.data?.dps;
+				const r = res?.data?.reqs;
+				const merg = d?.map((dp, i) => ({
+					dp,
+					req: r[i],
+				}));
+				setRequest(merg || []);
+			}
+		} catch (e) {
+			console.log(e)
+		}
+	};
+
 	useEffect(() => {
 		if (user.id) {
+			fetchreqs()
 			fetchallChats();
 		}
 	}, [user]);
@@ -220,7 +267,7 @@ export default function ChatLayout({ children }) {
 							<div className="text-[24px] text-black font-semibold dark:text-[#fff]">
 								Chats
 							</div>
-							<div className="text-[14px] text-black font-medium hover:bg-slate-100 rounded-2xl  w-20 flex justify-center items-center hover:animate-pulse">
+							<div onClick={() => setCheckRequest(true)} className="text-[14px] text-black font-medium hover:bg-slate-100 rounded-2xl  w-20 flex justify-center items-center hover:animate-pulse">
 								Request(1)
 							</div>
 						</div>
@@ -273,14 +320,14 @@ export default function ChatLayout({ children }) {
 				)}
 
 				{/* web */}
-				<div className="h-[100vh] pn:max-sm:hidden select-none pn:max-md:w-[100%] bg-white md:min-w-[390px] relative md:[360px] flex flex-col items-center pb-20 pn:max-sm:pt-16 md:border-r-2 border-[#f7f7f7] dark:border-[#2b2b2b]  overflow-auto scrollbar-hide ">
+				{checkRequest === false && < div className="h-[100vh] pn:max-sm:hidden select-none pn:max-md:w-[100%] bg-white md:min-w-[390px] relative md:[360px] flex flex-col items-center pb-20 pn:max-sm:pt-16 md:border-r-2 border-[#f7f7f7] dark:border-[#2b2b2b]  overflow-auto scrollbar-hide ">
 					{/* Chat header */}
 					<div className="w-[100%] h-[60px]  flex justify-between absolute bg-slate-50 items-center px-2">
 						<div className="text-[24px] text-black font-semibold dark:text-[#fff]">
 							Chats
 						</div>
-						<div className="text-[14px] text-black font-medium hover:bg-slate-100 rounded-2xl  w-20 flex justify-center items-center hover:animate-pulse">
-							Request(1)
+						<div onClick={() => setCheckRequest(true)} className="text-[14px] text-black font-medium hover:bg-slate-100 rounded-2xl  w-20 flex justify-center items-center hover:animate-pulse">
+							Request({request.length})
 						</div>
 					</div>
 					{/* messages */}
@@ -327,16 +374,78 @@ export default function ChatLayout({ children }) {
             <div className="h-[1px] w-[80%] rounded-full flex self-center bg-[#f9f9f9]"></div> */}
 					</div>
 				</div>
+				}
+
+				{checkRequest && < div className="h-[100vh] pn:max-sm:hidden select-none pn:max-md:w-[100%] bg-white md:min-w-[390px] relative md:[360px] flex flex-col items-center  md:border-r-2 border-[#f7f7f7] dark:border-[#2b2b2b]  overflow-auto scrollbar-hide ">
+					{/* Chat header */}
+
+
+					{/* messages */}
+					<div className="w-[100%] h-full flex flex-col ">
+						<div className="text-xl p-3 font-semibold border-b mb-2">Requests</div>
+						{/* one chat */}
+						{request.length > 0 && request.map((d, i) => (
+							<>
+								<div
+
+									className="w-[100%] gap-2 py-2 px-2 pn:max-sm:hidden duration-200A hover:bg-slate-100 h-[55px]  flex flex-row justify-between items-center "
+								>
+									<div className=" gap-2 py-2 flex flex-row justify-start items-center ">
+										<div>
+											<img
+												src={d?.dp}
+												className="h-[40px] w-[40px] rounded-[17px] ring-1 ring-white bg-yellow-300 "
+											/>
+										</div>
+										<div>
+											<div className="text-[15px] font-semibold">
+												{d?.req?.id?.fullname}
+											</div>
+											<div className="text-[14px]">{d?.req?.id?.username}</div>
+										</div>
+									</div>
+									<div className="flex justify-center items-center gap-2">
+										<div onClick={() => handleStatus(i, "reject", d)}><RxCross2 className="text-red-600 font-semibold" /></div>
+										<div onClick={() => handleStatus(i, "accept", d)}><IoCheckmark className="text-green-600 font-semibold" /></div>
+									</div>
+								</div >
+
+								<div className="w-[99%] border-b-[0.5px] "></div>
+							</>
+						))}
+
+						{
+							request.length <= 0 && <div className="flex justify-center h-full items-center ">
+								Empty Hai
+							</div>
+						}
+
+						{/* <div className="w-[100%] rounded-xl my-1 bg-slate-100 animate-pulse h-[70px] px-4 flex flex-row "></div>
+            <div className="h-[1px] w-[80%] rounded-full flex self-center bg-[#f9f9f9]"></div>
+            <div className="w-[100%] rounded-xl my-1 bg-slate-100 animate-pulse h-[70px] px-4 flex flex-row "></div>
+            <div className="h-[1px] w-[80%] rounded-full flex self-center bg-[#f9f9f9]"></div>
+            <div className="w-[100%] rounded-xl my-1 bg-slate-100 animate-pulse h-[70px] px-4 flex flex-row "></div>
+            <div className="h-[1px] w-[80%] rounded-full flex self-center bg-[#f9f9f9]"></div>
+            <div className="w-[100%] rounded-xl my-1 bg-slate-100 animate-pulse h-[70px] px-4 flex flex-row "></div>
+            <div className="h-[1px] w-[80%] rounded-full flex self-center bg-[#f9f9f9]"></div>
+            <div className="w-[100%] rounded-xl my-1 bg-slate-100 animate-pulse h-[70px] px-4 flex flex-row "></div>
+            <div className="h-[1px] w-[80%] rounded-full flex self-center bg-[#f9f9f9]"></div> */}
+					</div>
+				</div>
+				}
+
 
 				{/* Chat */}
 				<div className="w-full h-full pn:max-sm:hidden"> {children}</div>
 
-				{id && con && (
-					<div className="w-full h-full sm:hidden">
-						<Chats con={con} id={id} setVisible={setVisible} />
-					</div>
-				)}
-			</div>
+				{
+					id && con && (
+						<div className="w-full h-full sm:hidden">
+							<Chats con={con} id={id} setVisible={setVisible} />
+						</div>
+					)
+				}
+			</div >
 		);
 	}
 }

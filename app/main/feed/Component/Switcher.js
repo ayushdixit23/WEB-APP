@@ -32,7 +32,7 @@ function Switcher() {
   };
   return (
     <div>
-      <div className="h-[50px] dark:bg-black bg-white shadow-sm z-10 pn:max-md:h-[40px] pn:max-sm:items-center  pn:max-sm:w-[100%] sm:max-md:px-1 sm:max-md:rounded-r-3xl md:w-[388px] md:pl-2 pn:max-md:justify-start absolute md:fixed flex flex-row items-end">
+      <div className="h-[60px] dark:bg-black bg-white shadow-sm z-10 pn:max-md:h-[40px] pn:max-sm:items-center  pn:max-sm:w-[100%] sm:max-md:px-1 sm:max-md:rounded-r-3xl md:w-[388px] md:pl-2 pn:max-md:justify-start absolute md:fixed flex flex-row items-end">
         {/* // New for you */}
         <Link
           href={"/main/feed/newForYou"}

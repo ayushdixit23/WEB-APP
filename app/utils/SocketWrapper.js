@@ -68,8 +68,8 @@ export const SocketContextProvider = ({ children }) => {
       });
 
       newSocket.on("outer-private", (data) => {
-       
-      //  dispatch(setMessages([...messages, data.data]));
+        console.log(data, "from outer-private")
+        //  dispatch(setMessages([...messages, data.data]));
         dispatch(setincommsgs(data.data));
       });
       // const newSocket = io("https://rooms.grovyo.xyz", {

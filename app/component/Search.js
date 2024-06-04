@@ -19,8 +19,8 @@ function page() {
   const [load, setLoad] = useState(false);
   const [timeout, setTimeout] = useState("");
   const [active, setActive] = useState("prosites");
-  const key = process.env.NEXT_PUBLIC_KEY
-  const { data: user } = useAuthContext()
+  const key = process.env.NEXT_PUBLIC_KEY;
+  const { data: user } = useAuthContext();
   const [click, setClick] = useState(1);
   //const href = `/defprosite?dd=${data}`;
   // search
@@ -98,16 +98,15 @@ function page() {
 
   const recentSearchs = async () => {
     try {
-      const res = await axios.get(`${API}/webmobileSearch/${user?.id}`)
+      const res = await axios.get(`${API}/webmobileSearch/${user?.id}`);
       if (res.data.success) {
-        setRecentSearchCom(res.data?.recentSearchesCommunity)
-        setRecentSearchPro(res.data?.recentSearchesProsites)
+        setRecentSearchCom(res.data?.recentSearchesCommunity);
+        setRecentSearchPro(res.data?.recentSearchesProsites);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
-
+  };
 
   const handleSearch = async () => {
     setActive("prosites"), setClick(1);
@@ -141,66 +140,76 @@ function page() {
 
   const addSearchCom = async (sId) => {
     try {
-      const res = await axios.post(`${API}/addRecentCommunity/${user?.id}`, { sId })
+      const res = await axios.post(`${API}/addRecentCommunity/${user?.id}`, {
+        sId,
+      });
       if (res.data.success) {
-        recentSearchs()
+        recentSearchs();
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const addSearchPro = async (sId) => {
     try {
-      const res = await axios.post(`${API}/addRecentProsite/${user?.id}`, { sId })
+      const res = await axios.post(`${API}/addRecentProsite/${user?.id}`, {
+        sId,
+      });
       if (res.data.success) {
-        recentSearchs()
+        recentSearchs();
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   const removeSearchCom = async (sId) => {
     try {
-      const res = await axios.post(`${API}/removeRecentSrcCommunity/${user?.id}`, { sId })
+      const res = await axios.post(
+        `${API}/removeRecentSrcCommunity/${user?.id}`,
+        { sId }
+      );
       if (res.data.success) {
-        recentSearchs()
+        recentSearchs();
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const removeSearchPro = async (sId) => {
     try {
-      const res = await axios.post(`${API}/removeRecentSrcProsite/${user?.id}`, { sId })
+      const res = await axios.post(
+        `${API}/removeRecentSrcProsite/${user?.id}`,
+        { sId }
+      );
       if (res.data.success) {
-        recentSearchs()
+        recentSearchs();
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     if (text && active === "prosites") {
-      handleSearch()
+      handleSearch();
     }
 
     if (text && active === "communities") {
-      comm()
+      comm();
     }
-  }, [text])
+  }, [text]);
 
   useEffect(() => {
     if (user.id) {
-      recentSearchs()
+      recentSearchs();
     }
-  }, [user.id])
+  }, [user.id]);
 
   return (
-    <div className="md:min-w-[390px] md:[360px] h-screen dark:bg-[#000] bg-[#fff] flex flex-col">
-      <div className="flex flex-row justify-around dark:bg-black bg-white items-center p-2 h-[6%] w-[100%]">
+    <div className="pn:max-md:w-[100%] md:min-w-[390px] h-screen dark:bg-[#000] bg-white flex flex-col">
+      <div className="flex flex-row justify-around dark:bg-black mt-2 bg-white items-center p-2 h-[6%] w-[100%]">
         <input
           onKeyPress={(e) => {
             if (e.key === "Enter") {
@@ -208,7 +217,7 @@ function page() {
             }
           }}
           value={text}
-          className="ring-1 ring-[#E2E8F0] dark:ring-[#000] dark:bg-[#3e3e3e] dark:text-[#fff] rounded-xl p-2 w-[85%] outline-none text-black"
+          className="ring-1 ring-[#E2E8F0] dark:ring-[#000] dark:bg-[#3e3e3e] dark:text-[#fff] rounded-xl p-2 w-[100%] outline-none text-black"
           placeholder="Search"
           onChange={(t) => setText(t.target.value)}
         />
@@ -243,109 +252,134 @@ function page() {
         </div>
       </div>
 
-      <div className=" w-[100%]  px-10">
+      <div className=" w-[100%] px-10">
         <div className="w-[100%] bg-[#f6f6f6] dark:bg-[#171717] h-[1px]"></div>
       </div>
       {/* People */}
       <div className="overflow-auto scrollbar-hide ">
         {active === "prosites" ? (
           <>
-            {data?.length > 0 ? < div className="px-2">
-              {data.map((d, i) => (
-                <a
-                  onClick={() => addSearchPro(d?.p?._id)}
-                  target="_blank"
-                  href={`https://grovyo.com/${d?.p?.username}`}
-                  className="flex flex-row items-center dark:bg-[#171717] bg-[#f7f7f7] rounded-lg px-2 py-2 my-2"
-                >
-                  <img
-                    src={d?.dps}
-                    className="h-[35px] w-[35px] bg-[#f5f5f5] rounded-2xl"
-                  />
-                  <div className="px-2 py-2 dark:text-white text-black text-[14px] font-bold ">
-                    <div className="flex items-center gap-1">
-                      <div>{d?.p?.fullname}</div>
-                      {d?.p?.isverified && <div><MdVerified className="text-blue-900" /></div>}
-
-                    </div>
-                    <div>{d?.p?.username}</div>
-
-                  </div>
-
-                </a>
-              ))}
-            </div>
-              :
-              <div>
-                {recentSearchPro.map((d) => (
+            {data?.length > 0 ? (
+              <div className="">
+                {data.map((d, i) => (
                   <a
-
+                    onClick={() => addSearchPro(d?.p?._id)}
                     target="_blank"
-                    href={`https://grovyo.com/${d?.username}`}
-                    className="flex flex-row items-center dark:bg-[#171717] bg-[#f7f7f7] rounded-lg px-2 py-2 my-2"
+                    href={`https://grovyo.com/${d?.p?.username}`}
+                    className="flex flex-row items-center dark:bg-[#171717] pt-1 bg-[#f7f7f7] px-2 justify-between"
                   >
-                    <img
-                      src={d?.dp}
-                      className="h-[35px] w-[35px] bg-[#f5f5f5] rounded-2xl"
-                    />
-                    <div className="px-2 py-2 dark:text-white text-black text-[14px] font-bold ">
-                      <div className="flex items-center gap-1">
-                        <div>{d?.fullname}</div>
-                        {d?.isverified && <div><MdVerified className="text-blue-900" /></div>}
-
+                    <div className="flex items-center">
+                      <img
+                        src={d?.dps}
+                        className="h-[45px] w-[45px] bg-[#fff] rounded-[20px]"
+                      />
+                      <div className="px-2 py-2 dark:text-white text-black text-[14px] font-bold ">
+                        <div className="flex items-center gap-1">
+                          <div>{d?.p?.fullname}</div>
+                          {d?.p?.isverified && (
+                            <div>
+                              <MdVerified className="text-blue-600" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[11px] ">{d?.p?.username}</div>
                       </div>
-                      <div>{d?.username}</div>
                     </div>
-                    <div><RxCross2 onClick={() => removeSearchPro(d?.id)} /></div>
+                    <div>
+                      <RxCross2 onClick={() => removeSearchPro(d?.id)} />
+                    </div>
                   </a>
                 ))}
               </div>
-            }
+            ) : (
+              <div>
+                {recentSearchPro.map((d) => (
+                  <a
+                    target="_blank"
+                    href={`https://grovyo.com/${d?.username}`}
+                    className="flex flex-row items-center dark:bg-[#171717] bg-[#f7f7f7] px-2 justify-between"
+                  >
+                    <div className="flex items-center">
+                      <img
+                        src={d?.dp}
+                        className="h-[45px] w-[45px] bg-[#fff] rounded-[20px]"
+                      />
+                      <div className="px-2 py-2 dark:text-white text-black text-[14px] font-bold ">
+                        <div className="flex items-center gap-1">
+                          <div>{d?.fullname}</div>
+                          {d?.isverified && (
+                            <div>
+                              <MdVerified className="text-blue-600" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[11px] ">{d?.username}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <RxCross2 onClick={() => removeSearchPro(d?.id)} />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
           </>
         ) : (
           <>
-
-            {dataa.length > 0 ? < div className="px-2">
-              {dataa.map((d, i) => (
-                <Link
-                  onClick={() => addSearchCom(d?.p?._id)}
-                  href={`/main/feed/newForYou/${d?.p?._id}`}
-                  className="flex flex-row dark:bg-[#171717] bg-[#f7f7f7] rounded-lg px-2 py-2 my-2"
-                >
-                  <img
-                    src={d?.dps}
-                    className="h-[35px] w-[35px] bg-slate-400  rounded-2xl"
-                  />
-                  <div className="px-2 dark:text-white py-2 text-black text-[14px] font-bold ">
-                    {d?.p?.title}
-                  </div>
-
-                </Link>
-              ))}
-            </div>
-              :
-              < div className="px-2">
-                {recentSearchCom.map((d, i) => (
+            {dataa.length > 0 ? (
+              <div className="">
+                {dataa.map((d, i) => (
                   <Link
-                    href={`/main/feed/community/${d?.id}`}
-                    className="flex flex-row dark:bg-[#171717] bg-[#f7f7f7] rounded-lg px-2 py-2 my-2"
+                    // href={`/main/feed/newForYou/${d?.p?._id}`}
+                    href={`/main/feed/community/${d?.p?._id}`}
+                    className="flex flex-row items-center dark:bg-[#171717] pt-1 bg-[#f7f7f7] px-2 justify-between"
                   >
-                    <img
-                      src={d?.dp}
-                      className="h-[35px] w-[35px] bg-slate-400  rounded-2xl"
-                    />
-                    <div className="px-2 dark:text-white py-2 text-black text-[14px] font-bold ">
-                      {d?.title}
+                    <div className="flex items-center">
+                      <img
+                        src={d?.dps}
+                        className="h-[45px] w-[45px] bg-[#fff] rounded-[20px]"
+                      />
+                      <div className="px-2 dark:text-white py-2 text-black ">
+                        <div className="text-[14px] font-bold ">
+                          {d?.p?.title}
+                        </div>
+                        <div className="text-[11px]">100 member</div>
+                      </div>
                     </div>
-                    <div ><RxCross2 onClick={() => removeSearchCom(d?.p?._id)} /></div>
+                    <div>
+                      <RxCross2 onClick={() => removeSearchCom(d?.p?._id)} />
+                    </div>
                   </Link>
                 ))}
               </div>
-            }
+            ) : (
+              <div className="">
+                {recentSearchCom.map((d, i) => (
+                  <Link
+                    href={`/main/feed/community/${d?.id}`}
+                    className="flex flex-row items-center dark:bg-[#171717] pt-1 bg-[#f7f7f7] px-2 justify-between"
+                  >
+                    <div className="flex items-center">
+                      <img
+                        src={d?.dp}
+                        className="h-[45px] w-[45px] bg-[#fff] rounded-[20px]"
+                      />
+                      <div className="px-2 dark:text-white py-2 text-black ">
+                        <div className="text-[14px] font-bold ">{d?.title}</div>
+                        <div className="text-[11px]">100 member</div>
+                      </div>
+                    </div>
+                    <div>
+                      <RxCross2 onClick={() => removeSearchCom(d?.p?._id)} />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>
-    </div >
+    </div>
   );
 }
 

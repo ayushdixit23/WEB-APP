@@ -48,6 +48,7 @@ const Components = () => {
   const { data } = useAuthContext();
   const { socket } = useSocketContext();
   const searchParams = useSearchParams()
+  const [end, setEnd] = useState(true)
   const optionType = searchParams.get("type")
   const params = useParams();
   const [url, setUrl] = useState("");
@@ -245,6 +246,9 @@ const Components = () => {
           dispatch(setMessages([...newMessages, ...messages]));
           if (res.data.messages.length > 0) {
             // setEnd(true);
+            setEnd(false)
+          } else {
+            setEnd(true)
           }
         }
       }
@@ -660,7 +664,7 @@ const Components = () => {
                 next={loadmore}
                 style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
                 inverse={true} //
-                hasMore={true}
+                hasMore={end}
                 loader={
                   <div className="flex justify-center items-center p-3">
                     <div className="animate-spin ">

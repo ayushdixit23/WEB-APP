@@ -12,6 +12,9 @@ import {
   defaultLayoutIcons,
 } from "@vidstack/react/player/layouts/default";
 
+import { VscSend } from "react-icons/vsc";
+import { PiHandsClapping } from "react-icons/pi";
+
 export default function CommunityLayout({ children }) {
   const { data } = useAuthContext();
   const [feed, setFeed] = useState([]);
@@ -53,103 +56,115 @@ export default function CommunityLayout({ children }) {
     </div> */}
       {/*if no data*/}
       <div className="w-[100%] h-screen bg-white dark:bg-[#171717]  flex pn:max-md:justify-center ">
-        <div className=" pn:max-md:h-[96vh] h-screen overflow-auto scrollbar-hide dark:bg-[#171717] py-12 pn:max-sm:pt-20 select-none md:min-w-[390px] md:w-[360px] flex flex-col items-center pb-20 md:pt-10 md:border-r-2 border-[#f7f7f7] dark:border-[#171717]  self-end ">
+        <div className=" pn:max-md:h-[96vh] h-screen overflow-auto scrollbar-hide  dark:bg-[#171717] select-none md:min-w-[390px] lg:w-[360px] flex flex-col items-center md:border-r-2 border-[#f7f7f7] dark:border-[#171717] self-end ">
           {/* post 1*/}
-          <div className="mt-10">
-            <a
-              target="_blank"
-              href={`https://workspace.grovyo.com/aybdhw?zyxxpht=${data?.id}&path=/main/community/createCommunity`}
-            >
-              Create Community
-            </a>
+          <div className=" pn:max-sm:pt-18 pt-16 p-2 w-full">
+            <div className="bg-green-300 rounded-xl p-2 text-center h-[140px] flex flex-col justify-center items-center">
+              <div className="font-bold">Don't have a community?</div>
+              <div className="text-[14px] font-semibold">
+                create you own community and invite your friends and peoples
+              </div>
+              <a
+                target="_blank"
+                href={`https://workspace.grovyo.com/aybdhw?zyxxpht=${data?.id}&path=/main/community/createCommunity`}
+                className="bg-white text-[14px] mt-2 p-2 rounded-xl"
+              >
+                Create now
+              </a>
+            </div>
           </div>
 
           {feed.map((d, i) => (
             <Link
               href={`/main/feed/community/${d?.community?._id}`}
               key={i}
-              className="bg-slate-50 pn:max-md:rounded-2xl dark:bg-[#242424]"
+              className="bg-slate-50 pn:max-md:rounded-2xl w-full dark:bg-[#242424]"
             >
-              <div className="w-[100%] rounded-2xl flex flex-col items-center ">
-                <div className="w-[100%] bg-white flex px-1 justify-between items-center ">
-                  <div className="h-[55px]  flex flex-row items-center ">
-                    <div className=" flex object-scale-down items-center h-[100%] ">
-                      <img
-                        src={d?.dps}
-                        className="h-[45px] w-[45px] pn:max-sm:w-[35px] pn:max-sm:h-[35px] pn:max-sm:rounded-[15px] rounded-[20px] ring-1 ring-white bg-yellow-300 "
-                      />
-                    </div>
-                    {/* Community name */}
-                    <div className="flex flex-col justify-center px-2 items-start">
-                      <div className="flex flex-col space-y-[0.5px] justify-start items-start">
-                        <div className="text-[16px] pn:max-sm:text-[14px] font-medium">
-                          {d?.community?.title}
+              <div className="w-[100%] bg-white flex px-1 justify-between items-center ">
+                <div className="h-[55px] pn:max-sm:h-[50px] flex flex-row items-center ">
+                  <div className=" flex object-scale-down items-center h-[100%] ">
+                    <img
+                      src={d?.dps}
+                      className="h-[35px] w-[35px] pn:max-sm:w-[30px] pn:max-sm:h-[30px] pn:max-sm:rounded-[13px] rounded-[15px] ring-1 ring-white bg-yellow-300 "
+                    />
+                  </div>
+                  {/* Community name */}
+                  <div className="flex flex-col justify-center px-2 items-start">
+                    <div className="flex flex-col space-y-[0.5px] justify-start items-start">
+                      <div className="text-[14px] pn:max-sm:text-[12px] font-semibold">
+                        {d?.community?.title}
+                      </div>
+                      <div className="flex">
+                        <div className="text-[10px] pn:max-sm:text-[10px] font-medium text-[#5C5C5C]">
+                          By {d?.community?.creator?.fullname}
                         </div>
-                        <div className="flex">
-                          <div className="text-[12px] pn:max-sm:text-[10px] font-medium text-[#5C5C5C]">
-                            By {d?.community?.creator?.fullname}
-                          </div>
-                          {/* <div className="text-[12px] pn:max-sm:text-[10px] font-medium text-[#5C5C5C]">
-                                . {formatDate(d?.posts?.createdAt)}
-                              </div> */}
+                        <div className="text-[10px] font-medium text-[#5C5C5C]">
+                          {/* . {formatDate(d?.posts?.createdAt)} */}
                         </div>
                       </div>
                     </div>
                   </div>
-                  {/* Animation of join nd bell */}
-                  {/* {d?.subs === "unsubscribed" ? (
-                        <div
-                          onClick={() => joinmembers(d?.posts?.community._id)}
-                          className="bg-[#f5f5f5] p-2 px-4 rounded-xl pn:max-sm:text-[12px] font-medium text-[14px] text-[#5c5c5c]"
-                        >
-                          Join
-                        </div>
+                </div>
+                {/* Animation of join nd bell */}
+                {/* {d?.subs === "unsubscribed" ? (
+                     
                       ) : (
                         <div
                           onClick={() => unjoinmembers(d?.posts?.community._id)}
                           className="  rounded-xl text-[14px] text-[#5c5c5c]"
                         ></div>
                       )} */}
+                <div className="bg-[#f5f5f5] p-2 px-4 rounded-xl pn:max-sm:text-[12px] font-medium text-[14px] text-[#5c5c5c]">
+                  Join
                 </div>
               </div>
 
               {/* POst */}
-
-              <div className="h-[210px] rounded-xl w-[360px] flex justify-center items-center">
-                {/* {d?.urls.map((f) => (
-                  <div className="h-full w-full rounded-xl ">
-                    {f?.type.startsWith("image") ? (
-                      <img
-                        src={f?.content}
-                        className="h-full p-2 rounded-2xl w-full"
-                      />
+              <div className="px-1">
+                <div className="bg-[#f4f4f4] rounded-xl w-full flex flex-col justify-center items-center ">
+                  <>
+                    {d?.urls.length > 1 ? (
+                      <>
+                        {d?.urls.map((f) => (
+                          <div className="sm:h-[260px] h-[300px] w-full rounded-xl ">
+                            {
+                              f?.type.startsWith("image") ? (
+                                <div className="h-full w-full p-1">
+                                  <img
+                                    src={f?.content}
+                                    className="h-full object-contain bg-black rounded-2xl w-full"
+                                  />
+                                </div>
+                              ) : (
+                                <div className="p-1 h-full">
+                                  <div className=" rounded-2xl h-full overflow-hidden">
+                                    <MediaPlayer
+                                      src={f?.content}
+                                      onQualitiesChange={480}
+                                      className="h-[300px] sm:h-[260px]"
+                                    >
+                                      <MediaProvider />
+                                      <DefaultVideoLayout
+                                        thumbnails={f?.content}
+                                        icons={defaultLayoutIcons}
+                                      />
+                                    </MediaPlayer>
+                                  </div>
+                                </div>
+                              )
+                              // <video src={f?.content} controls className="max-h-full" />
+                            }
+                          </div>
+                        ))}
+                      </>
                     ) : (
-                
-                      <div className="p-2 h-full">
-                        <div className=" rounded-2xl h-full overflow-hidden">
-                          <MediaPlayer src={f?.content} onQualitiesChange={480}>
-                            <MediaProvider />
-                            <DefaultVideoLayout
-                              thumbnails={f?.content}
-                              icons={defaultLayoutIcons}
-                            />
-                          </MediaPlayer>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))} */}
-
-                <>
-                  {d?.urls.length > 1 ? (
-                    <>
-                      {d?.urls.map((f) => (
+                      <>
                         <div className="sm:h-[260px] h-[300px] w-full rounded-xl ">
                           {
-                            f?.type.startsWith("image") ? (
+                            d?.urls[0]?.type.startsWith("image") ? (
                               <div className="h-full w-full p-1">
                                 <img
-                                  src={f?.content}
+                                  src={d?.urls[0]?.content}
                                   className="h-full object-contain bg-black rounded-2xl w-full"
                                 />
                               </div>
@@ -157,13 +172,13 @@ export default function CommunityLayout({ children }) {
                               <div className="p-1 h-full">
                                 <div className=" rounded-2xl h-full overflow-hidden">
                                   <MediaPlayer
-                                    src={f?.content}
+                                    src={d?.urls[0]?.content}
                                     onQualitiesChange={480}
                                     className="h-[300px] sm:h-[260px]"
                                   >
                                     <MediaProvider />
                                     <DefaultVideoLayout
-                                      thumbnails={f?.content}
+                                      thumbnails={d?.urls[0]?.content}
                                       icons={defaultLayoutIcons}
                                     />
                                   </MediaPlayer>
@@ -173,48 +188,18 @@ export default function CommunityLayout({ children }) {
                             // <video src={f?.content} controls className="max-h-full" />
                           }
                         </div>
-                      ))}
-                    </>
-                  ) : (
-                    <>
-                      <div className="sm:h-[260px] h-[300px] w-full rounded-xl ">
-                        {
-                          d?.urls[0]?.type.startsWith("image") ? (
-                            <div className="h-full w-full p-1">
-                              <img
-                                src={d?.urls[0]?.content}
-                                className="h-full object-contain bg-black rounded-2xl w-full"
-                              />
-                            </div>
-                          ) : (
-                            <div className="p-1 h-full">
-                              <div className=" rounded-2xl h-full overflow-hidden">
-                                <MediaPlayer
-                                  src={d?.urls[0]?.content}
-                                  onQualitiesChange={480}
-                                  className="h-[300px] sm:h-[260px]"
-                                >
-                                  <MediaProvider />
-                                  <DefaultVideoLayout
-                                    thumbnails={d?.urls[0]?.content}
-                                    icons={defaultLayoutIcons}
-                                  />
-                                </MediaPlayer>
-                              </div>
-                            </div>
-                          )
-                          // <video src={f?.content} controls className="max-h-full" />
-                        }
-                      </div>
-                    </>
-                  )}
-                </>
+                      </>
+                    )}
+                  </>
+                  <div className="h-[20px] sm:h-[25px] px-2 w-[100%] flex flex-col">
+                    <div className="text-[14px] pn:max-sm:text-[12px] text-black w-[100%] font-medium text-ellipsis overflow-hidden px-1">
+                      {d?.posts[0]?.title}
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="h-[55px] px-2 py-1 w-[100%] flex flex-col">
-                <div className="text-[16px] pn:max-sm:text-[14px] text-black w-[100%] font-medium text-ellipsis overflow-hidden px-1">
-                  {d?.posts[0]?.title}
-                </div>
+              <div className="px-2 py-1 w-full h-[40px] flex justify-between items-center">
                 <div className="flex flex-row gap-2 items-center  w-[100%]">
                   <div className="flex flex-row justify-start mt-1 ">
                     <div className="h-[20px] w-[20px] rounded-lg z-30 bg-slate-200 ">
@@ -246,7 +231,21 @@ export default function CommunityLayout({ children }) {
                     </div>
                   </div>
                   <div className="text-[12px] self-center mt-1 font-medium">
-                    {d?.posts?.community?.memberscount} <span> Member</span>
+                    {/* {d?.posts?.community?.memberscount}{" "} */}100
+                    <span> Memder</span>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <div
+                    className={`flex justify-center rounded-xl items-center gap-1 ${
+                      d?.liked ? "bg-[#bc7e36] text-white" : "bg-[#f4f4f4]"
+                    }  p-2`}
+                  >
+                    <PiHandsClapping />
+                    <div className="text-[12px]">100</div>
+                  </div>
+                  <div className="rounded-xl bg-[#f4f4f4] p-2">
+                    <VscSend />
                   </div>
                 </div>
               </div>

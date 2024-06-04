@@ -12,7 +12,7 @@ import Setting from "../assets/Setting";
 import { useAuthContext } from "../utils/AuthWrapper";
 
 function Sidebar() {
-  const { data } = useAuthContext()
+  const { data } = useAuthContext();
   const [sear, setSear] = useState(false);
   const [color, setColor] = useState(1);
 
@@ -45,7 +45,6 @@ function Sidebar() {
     const storedColor =
       JSON.parse(sessionStorage.getItem("selectedColor")) || 1;
     setColor(storedColor);
-
   }, []); // This should run only in the browser.
 
   const handleColor = (i) => {
@@ -82,10 +81,11 @@ function Sidebar() {
             >
               <div className="my-1">{d.img}</div>
               <div
-                className={`font-medium ${color === d.change
-                  ? "text-[14px] text-[#569FF5]"
-                  : "text-[14px] dark:text-white  text-[#333]"
-                  }`}
+                className={`font-medium ${
+                  color === d.change
+                    ? "text-[14px] text-[#569FF5]"
+                    : "text-[14px] dark:text-white  text-[#333]"
+                }`}
               >
                 {d.name}
               </div>
@@ -102,10 +102,11 @@ function Sidebar() {
               <Sarch color={color} setColor={setColor} />
             </div>
             <div
-              className={`font-medium ${color === 4
-                ? "text-[14px] text-[#569FF5]"
-                : "text-[14px] text-[#333]  dark:text-[#fff]"
-                }`}
+              className={`font-medium ${
+                color === 4
+                  ? "text-[14px] text-[#569FF5]"
+                  : "text-[14px] text-[#333]  dark:text-[#fff]"
+              }`}
             >
               Search
             </div>
@@ -120,10 +121,11 @@ function Sidebar() {
           >
             <Setting color={color} />
             <div
-              className={`font-medium ${color === 5
-                ? "text-[14px] text-blue-300 "
-                : "text-[14px] text-[#333]  dark:text-[#fff]"
-                }`}
+              className={`font-medium ${
+                color === 5
+                  ? "text-[14px] text-blue-300 "
+                  : "text-[14px] text-[#333]  dark:text-[#fff]"
+              }`}
             >
               Settings
             </div>
@@ -134,8 +136,9 @@ function Sidebar() {
         </div>
       </div>
       <div
-        className={`bg-blue-700 border-r-2 border-[#f9f9f9] dark:border-[#171717] md:min-w-[390px] md:[360px] duration-1000 h-screen  ${sear ? "absolute z-0 left-[7.7vh]" : "absolute z-0 -left-[100vh]"
-          }`}
+        className={`bg-blue-700 border-r-2 border-[#f9f9f9] dark:border-[#171717] md:min-w-[390px] md:[360px] duration-1000 h-screen  ${
+          sear ? "absolute z-0 left-[70px]" : "absolute z-0 -left-[100vh]"
+        }`}
       >
         <Search />
       </div>
