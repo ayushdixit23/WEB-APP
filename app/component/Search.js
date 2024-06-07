@@ -262,13 +262,12 @@ function page() {
             {data?.length > 0 ? (
               <div className="">
                 {data.map((d, i) => (
-                  <a
-                    onClick={() => addSearchPro(d?.p?._id)}
-                    target="_blank"
-                    href={`https://grovyo.com/${d?.p?.username}`}
+                  <div
                     className="flex flex-row items-center dark:bg-[#171717] pt-1 bg-[#f7f7f7] px-2 justify-between"
                   >
-                    <div className="flex items-center">
+                    <a onClick={() => addSearchPro(d?.p?._id)}
+                      target="_blank"
+                      href={`https://grovyo.com/${d?.p?.username}`} className="flex items-center">
                       <img
                         src={d?.dps}
                         className="h-[45px] w-[45px] bg-[#fff] rounded-[20px]"
@@ -284,22 +283,21 @@ function page() {
                         </div>
                         <div className="text-[11px] ">{d?.p?.username}</div>
                       </div>
-                    </div>
-                    <div>
+                    </a>
+                    {/* <div>
                       <RxCross2 onClick={() => removeSearchPro(d?.id)} />
-                    </div>
-                  </a>
+                    </div> */}
+                  </div>
                 ))}
               </div>
             ) : (
               <div>
                 {recentSearchPro.map((d) => (
-                  <a
-                    target="_blank"
-                    href={`https://grovyo.com/${d?.username}`}
+                  <div
                     className="flex flex-row items-center dark:bg-[#171717] bg-[#f7f7f7] px-2 justify-between"
                   >
-                    <div className="flex items-center">
+                    <a target="_blank"
+                      href={`https://grovyo.com/${d?.username}`} className="flex items-center">
                       <img
                         src={d?.dp}
                         className="h-[45px] w-[45px] bg-[#fff] rounded-[20px]"
@@ -315,11 +313,11 @@ function page() {
                         </div>
                         <div className="text-[11px] ">{d?.username}</div>
                       </div>
-                    </div>
+                    </a>
                     <div>
                       <RxCross2 onClick={() => removeSearchPro(d?.id)} />
                     </div>
-                  </a>
+                  </div>
                 ))}
               </div>
             )}
@@ -330,8 +328,8 @@ function page() {
               <div className="">
                 {dataa.map((d, i) => (
                   <Link
-                    // href={`/main/feed/newForYou/${d?.p?._id}`}
-                    href={`/main/feed/community/${d?.p?._id}`}
+                    href={`/main/feed/newForYou/${d?.p?._id}`}
+                    // href={`/main/feed/community/${d?.p?._id}`}
                     className="flex flex-row items-center dark:bg-[#171717] pt-1 bg-[#f7f7f7] px-2 justify-between"
                   >
                     <div className="flex items-center">
@@ -346,9 +344,9 @@ function page() {
                         <div className="text-[11px]">100 member</div>
                       </div>
                     </div>
-                    <div>
+                    {/* <div>
                       <RxCross2 onClick={() => removeSearchCom(d?.p?._id)} />
-                    </div>
+                    </div> */}
                   </Link>
                 ))}
               </div>
@@ -379,7 +377,7 @@ function page() {
           </>
         )}
       </div>
-    </div>
+    </div >
   );
 }
 

@@ -10,7 +10,7 @@ import Chats from "./../../component/Chats";
 import { useDispatch } from "react-redux";
 import { setVisible } from "../../redux/slice/anotherSlice";
 import { useSearchParams } from "next/navigation";
-import { IoCheckmark } from "react-icons/io5";
+import { IoCheckmark, IoChevronBack } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 
 export default function ChatLayout({ children }) {
@@ -382,7 +382,11 @@ export default function ChatLayout({ children }) {
 
 					{/* messages */}
 					<div className="w-[100%] h-full flex flex-col ">
-						<div className="text-xl p-3 font-semibold border-b mb-2">Requests</div>
+
+						<div className="text-xl px-2 p-3 flex items-center gap-1 font-semibold border-b mb-2">
+							<div><IoChevronBack onClick={() => setCheckRequest(false)} className="text-2xl" /></div>
+							<div>Requests</div>
+						</div>
 						{/* one chat */}
 						{request.length > 0 && request.map((d, i) => (
 							<>

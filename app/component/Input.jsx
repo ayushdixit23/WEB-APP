@@ -83,6 +83,7 @@ const Component = ({ sendMessages, sendgif, handleSend, senderId, convId, reciev
 
   return (
     <>
+      <div onClick={() => setShow(false)} className={`fixed inset-0 ${show ? "z-40" : "-z-20"} w-screen h-screen`}></div>
       {showgif && <div className="w-full h-[50vh] flex flex-col">
         <div className="w-full">
           <SearchBar />
@@ -92,7 +93,7 @@ const Component = ({ sendMessages, sendgif, handleSend, senderId, convId, reciev
           <SuggestionBar />
         </div>
 
-        <div className=" w-full bg-red-400 flex flex-grow overflow-y-scroll no-scrollbar">
+        <div className="">
           <Grid
             width="100%"
             height="100%"
@@ -113,7 +114,7 @@ const Component = ({ sendMessages, sendgif, handleSend, senderId, convId, reciev
       <div className="bg-grey-lighter px-4 py-4 flex items-center">
         <div className="relative">
           <MdPermMedia className="text-xl" onClick={() => setShow(true)} />
-          <div className={` ${show ? "absolute w-[230px] h-[60px] left-0 bottom-5 rounded-[12px] border-2 border-black bg-white" : "hidden"} `}>
+          <div className={` ${show ? "absolute w-[230px] h-[60px] left-0 z-40 bottom-5 rounded-[12px] border-2 border-black bg-white" : "hidden -z-10"} `}>
             <div className="flex gap-4 items-center h-full">
               <div>
                 <MdOutlineGif onClick={() => { setShow(false); setShowgif(true) }} className="w-[50px] h-[50px]" />

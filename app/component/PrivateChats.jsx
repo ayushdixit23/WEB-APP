@@ -278,7 +278,7 @@ const PrivateChats = ({ data, d, i, user, convId, socket, dispatch, messages }) 
 						</div>
 					)}
 					{d?.typ == "glimpse" && (
-						<div className={`relative group text-white ${data?.id === d?.sender?._id
+						<div className={`relative group  ${data?.id === d?.sender?._id
 							? "bg-[#0075ff] text-white p-2 mt-4 rounded-l-2xl rounded-br-2xl"
 							: "bg-[#ffffff] p-2 mt-4 rounded-r-2xl rounded-bl-2xl"
 							}`}>

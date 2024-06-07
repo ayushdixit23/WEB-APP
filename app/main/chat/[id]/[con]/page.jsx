@@ -605,7 +605,7 @@ const Components = () => {
 
   return (
     <>
-      <div onClick={() => setOptions(false)} className={`fixed inset - 0 ${options ? "z-40" : "-z-20"} w - screen h - screen`}></div>
+      <div onClick={() => setOptions(false)} className={`fixed inset-0 ${options ? "z-40" : "-z-20"} w-screen h-screen`}></div>
       <div className="w-full h-[100vh] relative">
         {/* header  */}
         <div

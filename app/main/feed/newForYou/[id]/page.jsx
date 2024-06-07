@@ -385,17 +385,13 @@ function Components({ params }) {
                           </div>
                         </div>
                       </div>
-                      <div className="h-[200px] mt-2 rounded-2xl bg-slate-200 flex justify-center items-center ">
-                        {d?.urls.map((f) => (
-                          <div className="h-full">
+                      <div className={`h-[200px] mt-2 rounded-2xl bg-slate-200  ${d?.urls.length > 1 ? "overflow-x-scroll no-scrollbar" : null}  flex justify-center items-center `}>
+                        {/* {d?.urls.map((f) => (
+                          <div className="h-full w-full ">
                             {f?.type.startsWith("image") ? (
-                              <img src={f?.content} className="max-h-full" />
+                              <img src={f?.content} className="object-contain h-full w-full" />
                             ) : (
-                              // <video
-                              //   src={f?.content}
-                              //   controls
-                              //   className="max-h-full"
-                              // />
+                            
                               <MediaPlayer src={f?.content} onQualitiesChange={480}>
                                 <MediaProvider />
                                 <DefaultVideoLayout
@@ -405,7 +401,78 @@ function Components({ params }) {
                               </MediaPlayer>
                             )}
                           </div>
-                        ))}
+                        ))} */}
+
+                        <>
+                          {d?.urls.length > 1 ? (
+                            <>
+                              {d?.urls.map((f) => (
+                                <div className="h-full min-w-[360px] ">
+                                  {
+                                    f?.type.startsWith("image") ? (
+                                      <div className="h-full w-full p-1">
+                                        <img
+                                          src={f?.content}
+                                          className="h-full  object-contain bg-black rounded-2xl w-full"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div className="h-full w-full ">
+                                        <div className=" rounded-2xl h-full overflow-hidden">
+                                          <MediaPlayer
+                                            src={f?.content}
+                                            onQualitiesChange={480}
+                                            className="h-[300px] sm:h-[260px]"
+                                          >
+                                            <MediaProvider />
+                                            <DefaultVideoLayout
+                                              thumbnails={f?.content}
+                                              icons={defaultLayoutIcons}
+                                            />
+                                          </MediaPlayer>
+                                        </div>
+                                      </div>
+                                    )
+                                    // <video src={f?.content} controls className="max-h-full" />
+                                  }
+                                </div>
+                              ))}
+                            </>
+                          ) : (
+                            <>
+                              <div className="h-full w-full ">
+                                {
+                                  d?.urls[0]?.type.startsWith("image") ? (
+                                    <div className="h-full w-full p-1">
+                                      <img
+                                        src={d?.urls[0]?.content}
+                                        className="h-full object-contain bg-black rounded-2xl w-full"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="h-full w-full ">
+                                      <div className=" rounded-2xl h-full overflow-hidden">
+                                        <MediaPlayer
+                                          src={d?.urls[0]?.content}
+                                          onQualitiesChange={480}
+                                          className="h-[300px] sm:h-[260px]"
+                                        >
+                                          <MediaProvider />
+                                          <DefaultVideoLayout
+                                            thumbnails={d?.urls[0]?.content}
+                                            icons={defaultLayoutIcons}
+                                          />
+                                        </MediaPlayer>
+                                      </div>
+                                    </div>
+                                  )
+                                  // <video src={f?.content} controls className="max-h-full" />
+                                }
+                              </div>
+                            </>
+                          )}
+                        </>
+
                       </div>
                       <div className=" px-2 mt-2 py-1 w-[100%] rounded-lg flex flex-col">
                         <div className="text-[14px] truncate text-black w-full ">
